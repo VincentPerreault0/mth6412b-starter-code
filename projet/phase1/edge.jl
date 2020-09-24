@@ -1,3 +1,5 @@
+include("node.jl")
+
 import Base.show
 
 """Type représentant les arêtes d'un graphe.
@@ -11,7 +13,7 @@ Exemple:
 """
 struct Edge
   name::String
-  nodes::(AbstractNode,AbstractNode)
+  nodes::Tuple{AbstractNode,AbstractNode}
 end
 
 """Renvoie le nom de l'arête."""

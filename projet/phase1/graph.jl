@@ -1,3 +1,6 @@
+include("node.jl")
+include("edge.jl")
+
 import Base.show
 
 """Type abstrait dont d'autres types de graphes dériveront."""
