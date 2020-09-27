@@ -132,6 +132,7 @@ function read_edges(header::Dict{String}{String}, filename::String)
           for j = start : start + n_on_this_line - 1
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
+              # Modification du format (k+1, i+k+2) en (k+1, (i+k+2, data[j+1]))
               edge = (k+1, (i+k+2, data[j+1]))
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
               edge = (k+1, (i+k+1, data[j+1]))
@@ -147,7 +148,6 @@ function read_edges(header::Dict{String}{String}, filename::String)
             push!(edges, edge)
             i += 1
           end
-          #print(edges)
 
           n_to_read -= n_on_this_line
           n_data -= n_on_this_line
@@ -187,7 +187,7 @@ function read_stsp(filename::String)
   edges_brut = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
-    # Modification de edge_list : Int[] -> []
+    # Modification de edge_list : Int[] -> Tuple{Int, String}[]
     edge_list = Tuple{Int, String}[]
     push!(graph_edges, edge_list)
   end
@@ -200,12 +200,9 @@ function read_stsp(filename::String)
     end
   end
 
-  #print(graph_edges)
   for k = 1 : dim
     graph_edges[k] = sort(graph_edges[k])
   end
-  #print(graph_edges)
-  #print(graph_nodes)
   println("✓")
   return graph_nodes, graph_edges
 end
