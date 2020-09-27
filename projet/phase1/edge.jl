@@ -13,19 +13,19 @@ Exemple:
 
 """
 struct Edge
-  name::String
+  weight::String
   nodes::Tuple{AbstractNode,AbstractNode}
 end
 
 """Renvoie le nom de l'arête."""
-name(edge::Edge) = edge.name
+weight(edge::Edge) = edge.weight
 
 """Renvoie les noeuds aux extrémités de l'edge."""
 nodes(edge::Edge) = edge.nodes
 
 """Affiche une arête."""
 function show(edge::Edge)
-  println("Edge ", name(edge))
+  println("Edge weights : ", weight(edge))
   for node in nodes(edge)
     show(node)
   end

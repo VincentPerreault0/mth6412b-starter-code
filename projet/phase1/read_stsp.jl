@@ -69,6 +69,7 @@ function read_nodes(header::Dict{String}{String}, filename::String)
     end
   end
   close(file)
+  #print(nodes)
   return nodes
 end
 
@@ -131,21 +132,22 @@ function read_edges(header::Dict{String}{String}, filename::String)
           for j = start : start + n_on_this_line - 1
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
-              edge = (k+1, i+k+2)
+              edge = (k+1, (i+k+2, data[j+1]))
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-              edge = (k+1, i+k+1)
+              edge = (k+1, (i+k+1, data[j+1]))
             elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
-              edge = (i+k+2, k+1)
+              edge = ((i+k+2, data[j+1]), k+1)
             elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
-              edge = (i+1, k+1)
+              edge = ((i+1, data[j+1]), k+1)
             elseif edge_weight_format == "FULL_MATRIX"
-              edge = (k+1, i+1)
+              edge = ((k+1, data[j+1]), i+1)
             else
               warn("Unknown format - function read_edges")
             end
             push!(edges, edge)
             i += 1
           end
+          #print(edges)
 
           n_to_read -= n_on_this_line
           n_data -= n_on_this_line
@@ -185,7 +187,8 @@ function read_stsp(filename::String)
   edges_brut = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
-    edge_list = Int[]
+    # Modification de edge_list : Int[] -> []
+    edge_list = Tuple{Int, String}[]
     push!(graph_edges, edge_list)
   end
 
@@ -197,9 +200,12 @@ function read_stsp(filename::String)
     end
   end
 
+  #print(graph_edges)
   for k = 1 : dim
     graph_edges[k] = sort(graph_edges[k])
   end
+  #print(graph_edges)
+  #print(graph_nodes)
   println("✓")
   return graph_nodes, graph_edges
 end
@@ -230,6 +236,7 @@ function plot_graph(nodes, edges)
   scatter!(x, y)
 
   fig
+  #savefig("test.png")
 end
 
 """Fonction de commodité qui lit un fichier stsp et trace le graphe."""
