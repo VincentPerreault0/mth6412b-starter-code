@@ -45,7 +45,7 @@ function main(filename)
 
     # Création et affichage du graphe
     G = Graph("Test", nodes, edges)
-    show(G)
+    # show(G)
 end
 
 #main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bayg29.tsp")

@@ -13,7 +13,7 @@ Exemple:
 
 """
 struct Edge
-  weight::String
+  weight::Float64
   nodes::Tuple{AbstractNode,AbstractNode}
 end
 
@@ -25,7 +25,7 @@ nodes(edge::Edge) = edge.nodes
 
 """Affiche une arête."""
 function show(edge::Edge)
-  println("Edge weights : ", weight(edge))
+  println("Edge weights : ", string(weight(edge)))
   for node in nodes(edge)
     show(node)
   end

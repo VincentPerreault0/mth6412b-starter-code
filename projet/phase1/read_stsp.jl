@@ -133,15 +133,15 @@ function read_edges(header::Dict{String}{String}, filename::String)
             n_edges = n_edges + 1
             if edge_weight_format in ["UPPER_ROW", "LOWER_COL"]
               # Modification du format (k+1, i+k+2) en (k+1, (i+k+2, data[j+1]))
-              edge = (k+1, (i+k+2, data[j+1]))
+              edge = (k+1, (i+k+2, parse(Float64,data[j+1])))
             elseif edge_weight_format in ["UPPER_DIAG_ROW", "LOWER_DIAG_COL"]
-              edge = (k+1, (i+k+1, data[j+1]))
+              edge = (k+1, (i+k+1, parse(Float64,data[j+1])))
             elseif edge_weight_format in ["UPPER_COL", "LOWER_ROW"]
-              edge = ((i+k+2, data[j+1]), k+1)
+              edge = ((i+k+2, parse(Float64,data[j+1])), k+1)
             elseif edge_weight_format in ["UPPER_DIAG_COL", "LOWER_DIAG_ROW"]
-              edge = ((i+1, data[j+1]), k+1)
+              edge = ((i+1, parse(Float64,data[j+1])), k+1)
             elseif edge_weight_format == "FULL_MATRIX"
-              edge = ((k+1, data[j+1]), i+1)
+              edge = ((k+1, parse(Float64,data[j+1])), i+1)
             else
               warn("Unknown format - function read_edges")
             end
@@ -187,8 +187,8 @@ function read_stsp(filename::String)
   edges_brut = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
-    # Modification de edge_list : Int[] -> Tuple{Int, String}[]
-    edge_list = Tuple{Int, String}[]
+    # Modification de edge_list : Int[] -> Tuple{Int, Float}[]
+    edge_list = Tuple{Int, Float64}[]
     push!(graph_edges, edge_list)
   end
 
