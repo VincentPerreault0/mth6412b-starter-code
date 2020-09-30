@@ -1,14 +1,12 @@
 
-include("graph.jl")
+include("../phase2/graph.jl")
 include("node.jl")
 include("edge.jl")
 include("read_stsp.jl")
 
 """Fichier de test des fonctions read_stsp, plot_graph et des fichiers
     node.jl, edge.jl et graph.jl"""
-function main(filename)
-    #read_stsp(filename)
-    #plot_graph(filename)
+function main()
     print("test")
     node1 = Node("Joe", 3.14)
     node2 = Node("Steve", exp(1))
@@ -19,10 +17,4 @@ function main(filename)
     show(G)
 end
 
-project_file_path = "C:/Users/Vincent/Dropbox/2020- Maîtrise/Session 1/Impl d'Algo de Rech Oper/Projet/mth6412b-starter-code/"
-
-main(project_file_path * "instances/stsp/bayg29.tsp")
-#main(project_file_path * "instances/stsp/fri26.tsp")
-#main(project_file_path * "instances/stsp/gr120.tsp")
-#main(project_file_path * "instances/stsp/bays29.tsp")
-#main(project_file_path * "instances/stsp/swiss42.tsp")
+main()

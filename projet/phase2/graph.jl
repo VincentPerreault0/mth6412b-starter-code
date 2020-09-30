@@ -1,0 +1,120 @@
+
+include("../phase1/node.jl")
+include("../phase1/edge.jl")
+include("../phase1/read_stsp.jl")
+
+import Base.show
+
+"""Type abstrait dont d'autres types de graphes dériveront."""
+abstract type AbstractGraph{T} end
+
+"""Type representant un graphe comme un ensemble de noeuds.
+
+Exemple :
+
+    node1 = Node("Joe", 3.14)
+    node2 = Node("Steve", exp(1))
+    node3 = Node("Jill", 4.12)
+    G = Graph("Ick", [node1, node2, node3])
+
+Attention, tous les noeuds doivent avoir des données de même type.
+"""
+mutable struct Graph{T} <: AbstractGraph{T}
+  name::String
+  nodes::Vector{Node{T}}
+  edges::Vector{Edge}
+end
+
+"""Ajoute un noeud au graphe."""
+function add_node!(graph::Graph{T}, node::Node{T}) where T
+  push!(graph.nodes, node)
+  graph
+end
+
+"""Ajoute une arête au graphe."""
+function add_edge!(graph::Graph{T}, edge::Edge) where T
+  push!(graph.edges, edge)
+  for node in edge.nodes
+    if !(node in graph.nodes)
+      add_node!(graph, node)
+    end
+  end
+  graph
+end
+
+# on présume que tous les graphes dérivant d'AbstractGraph
+# posséderont des champs `name` et `nodes` ( et 'edges').
+
+"""Renvoie le nom du graphe."""
+name(graph::AbstractGraph) = graph.name
+
+"""Renvoie la liste des noeuds du graphe."""
+nodes(graph::AbstractGraph) = graph.nodes
+
+"""Renvoie la liste des arêtes du graphe."""
+edges(graph::AbstractGraph) = graph.edges
+
+"""Renvoie le nombre de noeuds du graphe."""
+nb_nodes(graph::AbstractGraph) = length(graph.nodes)
+
+"""Renvoie le nombre d'arêtes du graphe."""
+nb_edges(graph::AbstractGraph) = length(graph.edges)
+
+"""Affiche un graphe"""
+function show(graph::Graph)
+  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+  for node in nodes(graph)
+    show(node)
+  end
+  for edge in edges(graph)
+    show(edge)
+  end
+end
+
+"""Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
+function create_graph_from_stsp_file(filepath)
+  # Utilisation de la fonction read_stsp
+  graph_nodes, graph_edges = read_stsp(filepath)
+
+  # Définition des constantes
+  dim_nodes = length(graph_nodes)
+  edges = Edge[]
+  dim_edges = length(graph_edges)
+
+  # Création des nodes 
+  if (dim_nodes != 0)
+      nodes = Node{typeof(graph_nodes[1])}[]
+      for node_ind in 1 : dim_nodes
+          node = Node(string(node_ind), graph_nodes[node_ind])
+          push!(nodes, node)
+      end
+  else
+      # Si les nodes n'ont pas de data, on leur donne une data nulle : "nothing"
+      nodes = Node{Nothing}[]
+      for node_ind in 1 : dim_edges
+          node = Node(string(node_ind), nothing)
+          push!(nodes, node)
+      end
+  end
+
+  # Création des edges à partir des nodes
+  for i in 1 : dim_edges
+      dim = length(graph_edges[i])
+      for j in 1 : dim
+          first_node = i
+          second_node = graph_edges[i][j][1]
+          edge_weight = graph_edges[i][j][2]
+          edge = Edge(edge_weight, (nodes[first_node], nodes[second_node]))
+          push!(edges, edge)
+      end
+  end
+
+  # Création du nom du graphe
+  split_filepath = split(filepath, "/")
+  filename = split_filepath[length(split_filepath)]
+  split_filename = split(filename, ".")
+  graphname = String(split_filename[1])
+
+  # Création du graphe
+  return Graph(graphname, nodes, edges)
+end
