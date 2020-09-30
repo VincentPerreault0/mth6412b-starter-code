@@ -5,13 +5,79 @@ include("../phase1/read_stsp.jl")
 
 import Base.show
 
-mutable struct Graph{T}
+"""Type abstrait dont d'autres types de noeuds dériveront."""
+abstract type AbstractGraph{T} end
+
+"""Type abstrait représentant un graphe comme un nom et un ensemble de noeuds et de liens.
+
+Présume les champs suivants:
+  name::String
+  nodes::Vector{Node{T}}
+  edges::Vector{Edge}
+
+Attention, tous les noeuds doivent avoir des données de même type.
+"""
+
+"""Renvoie le nom du graphe."""
+name(graph::AbstractGraph) = graph.name
+
+"""Renvoie la liste des noeuds du graphe."""
+nodes(graph::AbstractGraph) = graph.nodes
+
+"""Renvoie la liste des arêtes du graphe."""
+edges(graph::AbstractGraph) = graph.edges
+
+"""Renvoie le nombre de noeuds du graphe."""
+nb_nodes(graph::AbstractGraph) = length(graph.nodes)
+
+"""Renvoie le nombre d'arêtes du graphe."""
+nb_edges(graph::AbstractGraph) = length(graph.edges)
+
+"""Affiche un graphe"""
+function show(graph::AbstractGraph)
+  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+  for node in nodes(graph)
+    show(node)
+  end
+  for edge in edges(graph)
+    show(edge)
+  end
+end
+
+"""Vérifie si le graphe contient un certain noeud."""
+contains_node(graph::AbstractGraph{T}, node::Node{T}) where T = node in graph.nodes
+
+"""Ajoute un noeud au graphe."""
+function add_node!(graph::AbstractGraph{T}, node::Node{T}) where T
+  push!(graph.nodes, node)
+  graph
+end
+
+"""Vérifie si le graphe contient un certain lien."""
+contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
+
+"""Ajoute une arête au graphe."""
+function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
+  push!(graph.edges, edge)
+
+  # Si les noeuds du lien ne font pas partie du graphe, les rajouter
+  for node in edge.nodes
+    if !contains_node(graph, node)
+      add_node!(graph, node)
+    end
+  end
+
+  graph
+end
+
+"""Structure concrète d'un graphe."""
+mutable struct Graph{T} <: AbstractGraph{T}
   name::String
   nodes::Vector{Node{T}}
   edges::Vector{Edge}
 end
 
-"""Type representant un graphe comme un ensemble de noeuds et de liens.
+"""Structure concrète representant un graphe comme un ensemble de noeuds et de liens.
 
 Exemple :
 
@@ -25,60 +91,8 @@ Exemple :
 Attention, tous les noeuds doivent avoir des données de même type.
 """
 
-"""Renvoie le nom du graphe."""
-name(graph::Graph) = graph.name
-
-"""Renvoie la liste des noeuds du graphe."""
-nodes(graph::Graph) = graph.nodes
-
-"""Renvoie la liste des arêtes du graphe."""
-edges(graph::Graph) = graph.edges
-
-"""Renvoie le nombre de noeuds du graphe."""
-nb_nodes(graph::Graph) = length(graph.nodes)
-
-"""Renvoie le nombre d'arêtes du graphe."""
-nb_edges(graph::Graph) = length(graph.edges)
-
-"""Affiche un graphe"""
-function show(graph::Graph)
-  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
-  for node in nodes(graph)
-    show(node)
-  end
-  for edge in edges(graph)
-    show(edge)
-  end
-end
-
 """Crée un graphe vide."""
 create_empty_graph(graphname::String, type::Type) = Graph{type}(graphname,[],[])
-
-"""Vérifie si le graphe contient un certain noeud."""
-contains_node(graph::Graph{T}, node::Node{T}) where T = node in graph.nodes
-
-"""Ajoute un noeud au graphe."""
-function add_node!(graph::Graph{T}, node::Node{T}) where T
-  push!(graph.nodes, node)
-  graph
-end
-
-"""Vérifie si le graphe contient un certain lien."""
-contains_edge(graph::Graph{T}, edge::Edge) where T = edge in graph.edges
-
-"""Ajoute une arête au graphe."""
-function add_edge!(graph::Graph{T}, edge::Edge) where T
-  push!(graph.edges, edge)
-
-  # Si les noeuds du lien ne font pas partie du graphe, les rajouter
-  for node in edge.nodes
-    if !contains_node(graph, node)
-      add_node!(graph, node)
-    end
-  end
-
-  graph
-end
 
 """Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
 function create_graph_from_stsp_file(filepath)
