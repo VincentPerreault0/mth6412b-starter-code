@@ -48,26 +48,28 @@ function main(filename)
     # show(G)
 end
 
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bayg29.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/fri26.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr120.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bays29.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/swiss42.tsp")
+project_file_path = "C:/Users/Vincent/Dropbox/2020- Maîtrise/Session 1/Impl d'Algo de Rech Oper/Projet/mth6412b-starter-code/"
 
-file_names = ["D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bayg29.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bays29.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/brazil58.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/brg180.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/dantzig42.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/fri26.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr17.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr21.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr24.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr48.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr120.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/hk48.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/pa561.tsp",
-            "D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/swiss42.tsp"]
+#main(project_file_path * "instances/stsp/bayg29.tsp")
+#main(project_file_path * "instances/stsp/fri26.tsp")
+#main(project_file_path * "instances/stsp/gr120.tsp")
+#main(project_file_path * "instances/stsp/bays29.tsp")
+#main(project_file_path * "instances/stsp/swiss42.tsp")
+
+file_names = ["instances/stsp/bayg29.tsp",
+            "instances/stsp/bays29.tsp",
+            "instances/stsp/brazil58.tsp",
+            "instances/stsp/brg180.tsp",
+            "instances/stsp/dantzig42.tsp",
+            "instances/stsp/fri26.tsp",
+            "instances/stsp/gr17.tsp",
+            "instances/stsp/gr21.tsp",
+            "instances/stsp/gr24.tsp",
+            "instances/stsp/gr48.tsp",
+            "instances/stsp/gr120.tsp",
+            "instances/stsp/hk48.tsp",
+            "instances/stsp/pa561.tsp",
+            "instances/stsp/swiss42.tsp"]
 
 for i = 1 : 14
     main(file_names[i])

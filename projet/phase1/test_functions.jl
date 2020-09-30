@@ -19,8 +19,10 @@ function main(filename)
     show(G)
 end
 
-main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bayg29.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/fri26.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/gr120.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/bays29.tsp")
-#main("D:/Poly_Montreal/Cours/MTH6412B/projet_part1/mth6412b-starter-code/instances/stsp/swiss42.tsp")
+project_file_path = "C:/Users/Vincent/Dropbox/2020- Maîtrise/Session 1/Impl d'Algo de Rech Oper/Projet/mth6412b-starter-code/"
+
+main(project_file_path * "instances/stsp/bayg29.tsp")
+#main(project_file_path * "instances/stsp/fri26.tsp")
+#main(project_file_path * "instances/stsp/gr120.tsp")
+#main(project_file_path * "instances/stsp/bays29.tsp")
+#main(project_file_path * "instances/stsp/swiss42.tsp")

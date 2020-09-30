@@ -9,7 +9,7 @@ Exemple:
 
         noeud1 = Node("Kirk", "guitar")
         noeud2 = Node("Lars", 2)
-        arete = Edge("Edgename", noeud1, noeud2)
+        arete = Edge(50, noeud1, noeud2)
 
 """
 struct Edge
@@ -17,7 +17,7 @@ struct Edge
   nodes::Tuple{AbstractNode,AbstractNode}
 end
 
-"""Renvoie le nom de l'arête."""
+"""Renvoie le poids de l'arête."""
 weight(edge::Edge) = edge.weight
 
 """Renvoie les noeuds aux extrémités de l'edge."""
@@ -25,7 +25,7 @@ nodes(edge::Edge) = edge.nodes
 
 """Affiche une arête."""
 function show(edge::Edge)
-  println("Edge weights : ", string(weight(edge)))
+  println("Edge weight : ", string(weight(edge)))
   for node in nodes(edge)
     show(node)
   end
