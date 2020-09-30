@@ -27,6 +27,7 @@ nodes(edge::Edge) = edge.nodes
 function show(edge::Edge)
   println("Edge weight : ", string(weight(edge)))
   for node in nodes(edge)
+    print("  ")
     show(node)
   end
 end
