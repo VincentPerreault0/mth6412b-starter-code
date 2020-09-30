@@ -5,60 +5,40 @@ include("../phase1/read_stsp.jl")
 
 import Base.show
 
-"""Type abstrait dont d'autres types de graphes dériveront."""
-abstract type AbstractGraph{T} end
+mutable struct Graph{T}
+  name::String
+  nodes::Vector{Node{T}}
+  edges::Vector{Edge}
+end
 
-"""Type representant un graphe comme un ensemble de noeuds.
+"""Type representant un graphe comme un ensemble de noeuds et de liens.
 
 Exemple :
 
     node1 = Node("Joe", 3.14)
     node2 = Node("Steve", exp(1))
     node3 = Node("Jill", 4.12)
-    G = Graph("Ick", [node1, node2, node3])
+    edge1 = Edge(500, (node1, node2))
+    edge2 = Edge(1000, (node2, node3))
+    G = Graph("Ick", [node1, node2, node3], [edge1, edge2])
 
 Attention, tous les noeuds doivent avoir des données de même type.
 """
-mutable struct Graph{T} <: AbstractGraph{T}
-  name::String
-  nodes::Vector{Node{T}}
-  edges::Vector{Edge}
-end
-
-"""Ajoute un noeud au graphe."""
-function add_node!(graph::Graph{T}, node::Node{T}) where T
-  push!(graph.nodes, node)
-  graph
-end
-
-"""Ajoute une arête au graphe."""
-function add_edge!(graph::Graph{T}, edge::Edge) where T
-  push!(graph.edges, edge)
-  for node in edge.nodes
-    if !(node in graph.nodes)
-      add_node!(graph, node)
-    end
-  end
-  graph
-end
-
-# on présume que tous les graphes dérivant d'AbstractGraph
-# posséderont des champs `name` et `nodes` ( et 'edges').
 
 """Renvoie le nom du graphe."""
-name(graph::AbstractGraph) = graph.name
+name(graph::Graph) = graph.name
 
 """Renvoie la liste des noeuds du graphe."""
-nodes(graph::AbstractGraph) = graph.nodes
+nodes(graph::Graph) = graph.nodes
 
 """Renvoie la liste des arêtes du graphe."""
-edges(graph::AbstractGraph) = graph.edges
+edges(graph::Graph) = graph.edges
 
 """Renvoie le nombre de noeuds du graphe."""
-nb_nodes(graph::AbstractGraph) = length(graph.nodes)
+nb_nodes(graph::Graph) = length(graph.nodes)
 
 """Renvoie le nombre d'arêtes du graphe."""
-nb_edges(graph::AbstractGraph) = length(graph.edges)
+nb_edges(graph::Graph) = length(graph.edges)
 
 """Affiche un graphe"""
 function show(graph::Graph)
@@ -69,6 +49,35 @@ function show(graph::Graph)
   for edge in edges(graph)
     show(edge)
   end
+end
+
+"""Crée un graphe vide."""
+create_empty_graph(graphname::String, type::Type) = Graph{type}(graphname,[],[])
+
+"""Vérifie si le graphe contient un certain noeud."""
+contains_node(graph::Graph{T}, node::Node{T}) where T = node in graph.nodes
+
+"""Ajoute un noeud au graphe."""
+function add_node!(graph::Graph{T}, node::Node{T}) where T
+  push!(graph.nodes, node)
+  graph
+end
+
+"""Vérifie si le graphe contient un certain lien."""
+contains_edge(graph::Graph{T}, edge::Edge) where T = edge in graph.edges
+
+"""Ajoute une arête au graphe."""
+function add_edge!(graph::Graph{T}, edge::Edge) where T
+  push!(graph.edges, edge)
+
+  # Si les noeuds du lien ne font pas partie du graphe, les rajouter
+  for node in edge.nodes
+    if !contains_node(graph, node)
+      add_node!(graph, node)
+    end
+  end
+
+  graph
 end
 
 """Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
@@ -109,7 +118,7 @@ function create_graph_from_stsp_file(filepath)
       end
   end
 
-  # Création du nom du graphe
+  # Création du nom du graphe à partir du nom du fichier
   split_filepath = split(filepath, "/")
   filename = split_filepath[length(split_filepath)]
   split_filename = split(filename, ".")
