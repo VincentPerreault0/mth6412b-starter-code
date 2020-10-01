@@ -128,6 +128,7 @@ g3 = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, no
 #println()
 
 mst = find_minimum_spanning_tree(g3, true)
+println()
 
 #show(mst)
 #println()

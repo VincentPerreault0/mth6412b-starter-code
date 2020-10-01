@@ -95,9 +95,9 @@ Attention, tous les noeuds doivent avoir des données de même type.
 create_empty_graph(graphname::String, type::Type) = Graph{type}(graphname,[],[])
 
 """Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
-function create_graph_from_stsp_file(filepath)
+function create_graph_from_stsp_file(filepath::String, verbose::Bool)
   # Utilisation de la fonction read_stsp
-  graph_nodes, graph_edges = read_stsp(filepath)
+  graph_nodes, graph_edges = read_stsp(filepath, verbose)
 
   # Définition des constantes
   dim_nodes = length(graph_nodes)

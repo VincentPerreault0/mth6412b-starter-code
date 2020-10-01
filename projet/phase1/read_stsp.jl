@@ -172,18 +172,28 @@ function read_edges(header::Dict{String}{String}, filename::String)
 end
 
 """Renvoie les noeuds et les arêtes du graphe."""
-function read_stsp(filename::String)
-  Base.print("Reading of header : ")
+function read_stsp(filename::String, verbose::Bool)
+  if verbose
+    Base.print("Reading of header : ")
+  end
   header = read_header(filename)
-  println("✓")
+  if verbose
+    println("✓")
+  end
   dim = parse(Int, header["DIMENSION"])
   edge_weight_format = header["EDGE_WEIGHT_FORMAT"]
 
-  Base.print("Reading of nodes : ")
+  if verbose
+    Base.print("Reading of nodes : ")
+  end
   graph_nodes = read_nodes(header, filename)
-  println("✓")
+  if verbose
+    println("✓")
+  end
 
-  Base.print("Reading of edges : ")
+  if verbose
+    Base.print("Reading of edges : ")
+  end
   edges_brut = read_edges(header, filename)
   graph_edges = []
   for k = 1 : dim
@@ -203,7 +213,9 @@ function read_stsp(filename::String)
   for k = 1 : dim
     graph_edges[k] = sort(graph_edges[k])
   end
-  println("✓")
+  if verbose
+    println("✓")
+  end
   return graph_nodes, graph_edges
 end
 
@@ -238,6 +250,6 @@ end
 
 """Fonction de commodité qui lit un fichier stsp et trace le graphe."""
 function plot_graph(filename::String)
-  graph_nodes, graph_edges = read_stsp(filename)
+  graph_nodes, graph_edges = read_stsp(filename, false)
   plot_graph(graph_nodes, graph_edges)
 end

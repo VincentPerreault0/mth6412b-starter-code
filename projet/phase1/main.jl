@@ -17,7 +17,7 @@ file_names = ["instances/stsp/bayg29.tsp",
             "instances/stsp/swiss42.tsp"]
 
 for i = 1 : 14
-    graph = create_graph_from_stsp_file(file_names[i])
+    graph = create_graph_from_stsp_file(file_names[i], true)
     #show(graph)
     println(string("ok file number : ",i))
 end

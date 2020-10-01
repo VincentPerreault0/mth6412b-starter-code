@@ -1,8 +1,5 @@
 
 include("../phase2/graph.jl")
-include("node.jl")
-include("edge.jl")
-include("read_stsp.jl")
 
 """Fichier de test des fonctions read_stsp, plot_graph et des fichiers
     node.jl, edge.jl et graph.jl"""
