@@ -19,10 +19,12 @@ function find_minimum_spanning_tree(graph::AbstractGraph{T}, verbose::Bool) wher
       print("Searching ")
       show(edge)
     end
+    
     # Trouver la ou les composantes connexes y touchant.
     linked_ccs = Vector{ConnectedComponent{T}}()
     for cc in connected_components
       nb_nodes_contained = contains_edge_nodes(cc, edge)
+
       # Si le lien touche à une seule composante, passer au lien suivant.
       if nb_nodes_contained == 2
         if verbose
@@ -36,6 +38,7 @@ function find_minimum_spanning_tree(graph::AbstractGraph{T}, verbose::Bool) wher
         end
       end
     end
+
     # Si le lien touche à 2 composantes connexes distinctes, les fusionner
     if length(linked_ccs) == 2
       if verbose

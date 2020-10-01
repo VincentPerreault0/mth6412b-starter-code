@@ -93,10 +93,11 @@ merge_connected_components!(cc1,cc3,edge2)
 @test edges(g1) == edges(cc1)
 
 
-# Tests pour les méthodes de Connected Component
+# Tests pour l'algorithme de Kruskal pour un arbre de recouvrement minimal
 println("Testing Minimum Spanning Tree Kruskal Algorithm...")
 println()
 
+# Exemple vu en cours
 nodeA = Node("a", nothing)
 nodeB = Node("b", nothing)
 nodeC = Node("c", nothing)
@@ -136,7 +137,7 @@ println()
 @test nb_nodes(mst) == nb_nodes(g3)
 @test nb_edges(mst) == 8
 @test contains_edge(mst,edge1) == true
-@test contains_edge(mst,edge2) == true || contains_edge(mst,edge9) == true
+@test contains_edge(mst,edge2) == true || contains_edge(mst,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
 @test contains_edge(mst,edge3) == true
 @test contains_edge(mst,edge4) == true
 @test contains_edge(mst,edge6) == true
