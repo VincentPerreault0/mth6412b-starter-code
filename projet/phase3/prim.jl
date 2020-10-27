@@ -46,7 +46,7 @@ function Prim(graph :: AbstractGraph, s :: AbstractNode)
         egde_tmp=popfirst!(p)
         if u in nodes(edge_tmp) && parent(u) in nodes(edges_tmp)
             p_tmp=priorityQueue{Edge}(edge_tmp)
-            while not u in nodes(edge_tmp) || not parent(u) in nodes(edges_tmp)
+            while not (u in nodes(edge_tmp) && parent(u) in nodes(edges_tmp))
                 edge_tmp=popfirst!(p)
                 push!(p_tmp, edge_tmp)
             end
