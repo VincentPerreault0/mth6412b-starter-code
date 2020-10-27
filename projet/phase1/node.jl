@@ -52,6 +52,7 @@ parent(node::AbstractNode) = node.parent
 function minweight(node::AbstractNode)
     node.minweight
 end
+
 """ Trouve la racine d une composante connexe a partir d'un noeud
 Actualise la racine de tous les noeuds sur le chemin """ 
 function find_root(node :: Node{T}, nodes=nothing) where T
