@@ -19,10 +19,12 @@ mutable struct Node{T} <: AbstractNode{T}
   rank::Int64
   parent ::Union{Nothing,Node{T}} #une racine n a pas de parent
   minweight::Int64
+  neigbours:: Union{Nothing, Vector{Node{}}}
 end
 
+"""initialise un noeud uniquement avec unnom et un data""" 
 function Node(name:: String, data)
-  return(Node{typeof(data)}(name, data, 0, nothing, 10000))
+  return(Node{typeof(data)}(name, data, 0, nothing, 10000, nothing))
 end
 
 function Node(name:: String, data, rank :: Int64)
@@ -48,9 +50,14 @@ rank(node::AbstractNode) = node.rank
 """Renvoie le parent du noeud."""
 parent(node::AbstractNode) = node.parent
 
-""" Renvoie minweight d un noeud"""
+""" Renvoie minweight du noeud"""
 function minweight(node::AbstractNode)
     node.minweight
+end
+
+""" Renvoie la liste des voisin  du noeud"""
+function neigbours(node:: AbstractNode)
+  return(node.neigbours)
 end
 
 """ Trouve la racine d une composante connexe a partir d'un noeud
