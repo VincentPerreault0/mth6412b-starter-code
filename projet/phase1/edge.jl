@@ -15,6 +15,11 @@ Exemple:
 struct Edge
   weight::Float64
   nodes::Tuple{AbstractNode,AbstractNode}
+  flag:: Bool
+end
+
+function Edge(weight:: Float64, nodes::Tuple{AbstractNode,AbstractNode})
+  return(Edge(weight, nodes, false))
 end
 
 """Renvoie le poids de l'arête."""
@@ -40,4 +45,9 @@ end
 """ definit egalite pour les files"""
 function ==(p::Edge, q::Edge) 
     return(weight(p) == weight(q))
+end
+
+""" indique si un noeud est dans une arrete ou pas"""
+function contains_node(node::AbstractNode, edge:: Edge)
+  return(node in nodes(edge))
 end
