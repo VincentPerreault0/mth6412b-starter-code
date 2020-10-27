@@ -1,5 +1,13 @@
-include("C:/Users/lora/Desktop/mth6412b-starter-code/projet/phase2/graph.jl")
+include("../phase2/graph.jl")
+include("priority_queue.jl")
 
-function Prim(G :: Graph, s :: Node)
+function Prim(graph :: Graph, s :: Node)
+    #Initialisation des noeuds 
+    for node in nodes(graph)
+        node.weight=10000
+        node.parent=nothing
+    end
+    s.weight=0
+    q=PriorityQueue{Edge}()
 
 end
