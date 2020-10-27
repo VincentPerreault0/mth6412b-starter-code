@@ -8,6 +8,16 @@ function Prim(graph :: Graph, s :: Node)
         node.parent=nothing
     end
     s.weight=0
-    q=PriorityQueue{Edge}()
+    q=PriorityQueue{Node}()
+    p=PriorityQueue{Edge}()
+    for node in nodes(graph)
+        push!(q, node)
+    end
+    while !is_empty(q)
+        #on sort un des noeuds noeud avec minweight minimal
+        u=popfirst!(q)
+        for edge in edges(graph)
+            if u in nodes(edge)
+
 
 end
