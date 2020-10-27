@@ -34,12 +34,9 @@ end
 
 """Donne le nombre d'éléments sur la file."""
 function nb_items(q::AbstractQueue)
-    length(q.items)
+    return(length(q.items))
 end
-"""Affiche une file."""
-function show(q::AbstractQueue)
-    show(q.items)
-end
+
 
 """File de priorité (pour les noeuds)"""
 mutable struct PriorityQueue{T} <: AbstractQueue{T}
@@ -60,4 +57,23 @@ function popfirst!(q::PriorityQueue)
     idx = findall(x -> x == highest, q.items)[1]
     deleteat!(q.items, idx)
     return(highest)
+end
+
+"""Retire et renvoie l'élément ayant la plus haute priorité, et qui contient le noeud concerne et son parent."""
+function popfirst!(q:: PriorityQueue{Edge}, node:: Node)
+    highest = minimum(items(q))
+    idx = findall(x -> x == highest, q.items)
+    tmp=-1
+    for i in idx
+        if node in nodes(items(q)[i]) && parent(node) in nodes(items(q)[i])
+            tmp=i
+            break
+        end
+    end
+    if tmp==-1
+        println("il y a un probleme avec pop")
+    end 
+    tmp2=items(q)[tmp]
+    deleteat!(q.items, tmp)
+    return(tmp2)
 end
