@@ -31,9 +31,11 @@ popfirst!(q::AbstractQueue) = popfirst!(q.items)
 function is_empty(q::AbstractQueue)
     length(q.items) == 0
 end
-"""Donne le nombre d'éléments sur la file."""
-length(q::AbstractQueue) = length(q.items)
 
+"""Donne le nombre d'éléments sur la file."""
+function nb_items(q::AbstractQueue)
+    length(q.items)
+end
 """Affiche une file."""
 function show(q::AbstractQueue)
     show(q.items)
