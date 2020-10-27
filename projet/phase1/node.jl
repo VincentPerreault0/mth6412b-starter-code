@@ -1,4 +1,5 @@
 import Base.show
+import Base.isless, Base.==
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -48,8 +49,9 @@ rank(node::AbstractNode) = node.rank
 parent(node::AbstractNode) = node.parent
 
 """ Renvoie minweight d un noeud"""
-minweight(node::AbstractNode) = node.minweight
-
+function minweight(node::AbstractNode)
+    node.minweight
+end
 """ Trouve la racine d une composante connexe a partir d'un noeud
 Actualise la racine de tous les noeuds sur le chemin """ 
 function find_root(node :: Node{T}, nodes=nothing) where T
@@ -67,6 +69,16 @@ function find_root(node :: Node{T}, nodes=nothing) where T
     find_root(parent(node), nodes)
   end 
 end 
+
+"""definit inegalite pour les files """
+function isless(p::AbstractNode, q::AbstractNode) 
+     return(minweight(p) < minweight(q))
+end
+
+""" definit egalite pour les files"""
+function ==(p::AbstractNode, q::AbstractNode) 
+    return(minweight(p) == minweight(q))
+end
 
 """Affiche un noeud."""
 function show(node::AbstractNode)
