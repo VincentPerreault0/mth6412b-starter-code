@@ -31,6 +31,7 @@ edges(graph::AbstractGraph) = graph.edges
 function nb_nodes(graph::AbstractGraph)
     length(graph.nodes)
 end
+
 """Renvoie le nombre d'arêtes du graphe."""
 nb_edges(graph::AbstractGraph) = length(graph.edges)
 
@@ -52,7 +53,7 @@ function contains_node(graph::AbstractGraph{T}, node::Node{T}) where T
 end
 
 """Ajoute un noeud au graphe."""
-function add_node!(graph::AbstractGraph{T}, node::Node{T}) where T
+function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
   push!(graph.nodes, node)
   graph
 end

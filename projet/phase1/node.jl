@@ -1,5 +1,6 @@
 import Base.show
 import Base.isless, Base.==
+import Base.push!
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -19,20 +20,20 @@ mutable struct Node{T} <: AbstractNode{T}
   rank::Int64
   parent ::Union{Nothing,Node{T}} #une racine n a pas de parent
   minweight::Int64
-  neighbours:: Union{Nothing, Vector{Node{T}} }
+  neighbours::Vector{Node{T}}
 end
 
 """initialise un noeud uniquement avec unnom et un data""" 
 function Node(name:: String, data)
-  return(Node{typeof(data)}(name, data, 0, nothing, 10000, nothing))
+  return(Node{typeof(data)}(name, data, 0, nothing, 10000, []))
 end
 
 function Node(name:: String, data, rank :: Int64)
- return(Node{typeof(data)}(name, data, rank, nothing, 10000, nothing))
+ return(Node{typeof(data)}(name, data, rank, nothing, 10000, []))
 end
 
 function Node(name:: String, data, parent :: Node)
- return(Node{typeof(data)}(name, data, 0, parent, 100000,nothing))
+ return(Node{typeof(data)}(name, data, 0, parent, 100000,[]))
 end
 
 # on présume que tous les noeuds dérivant d'AbstractNode
@@ -61,8 +62,9 @@ function neighbours(node:: AbstractNode)
 end
 
 """ ajoute un noeud a la liste adjacence de node"""
-function add_neighbour(node::AbstractNode, neighbour::AbstractNode)
+function add_neighbour(node::Node{T}, neighbour::Node{T}) where T
   push!(node.neighbours, neighbour)
+  return(node)
 end
 
 """ Trouve la racine d une composante connexe a partir d'un noeud

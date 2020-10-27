@@ -20,13 +20,30 @@ function main()
     show(tmp)
     tmp2=popfirst!(q)
     show(tmp2)
-    graph=Graph("graph", [node1, node1, node1],Vector{Edge}())
+    graph = Graph("Ick", [node1, node2, node3], [edge1, edge2])
+    add_node!(graph, node3)
+    println("add node works")
     show(graph)
     q=PriorityQueue([node1, node2])
     tmp=popfirst!(q)
     show(tmp)
     tmp2=popfirst!(q)
     show(tmp2)
+    for node in nodes(graph)
+        node.neighbours=Node{typeof(data(node))}[]
+    end
+    for edge in edges(graph)
+        node1=nodes(edge)[1]
+        node2=nodes(edge)[2]
+        add_neighbour(node1, node2)
+        add_neighbour(node2, node1)
+    end
+    #for node in nodes(graph)
+    #    println(node.neighbours)
+    #end 
+    ar=Edge[]
+    ar[node1]=edge1
+    println(ar)
 end
 
 main()
