@@ -44,7 +44,7 @@ function find_minimum_spanning_tree(graph::AbstractGraph{T}, verbose::Bool) wher
       if verbose
         println("Found between " * linked_ccs[1].name * " and " * linked_ccs[2].name * ". => Merging components.")
       end
-  
+      
       sort!(linked_ccs, by=cc -> nb_nodes(cc), rev = true)
       merge_connected_components!(linked_ccs[1], linked_ccs[2], edge)
       deleteat!(connected_components, findall(cc->cc==linked_ccs[2], connected_components))

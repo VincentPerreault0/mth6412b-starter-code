@@ -1,5 +1,5 @@
-
-include("node.jl")
+import Base.isless, Base.==
+include("../phase1/node.jl")
 
 import Base.show
 
@@ -30,4 +30,14 @@ function show(edge::Edge)
     print("  ")
     show(node)
   end
+end
+
+"""definit inegalite pour les files """
+function isless(p::Edge, q::Edge) 
+     return(weight(p) < weight(q))
+end
+
+""" definit egalite pour les files"""
+function ==(p::Edge, q::Edge) 
+    return(weight(p) == weight(q))
 end

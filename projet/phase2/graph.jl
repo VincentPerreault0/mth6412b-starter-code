@@ -33,6 +33,7 @@ nb_nodes(graph::AbstractGraph) = length(graph.nodes)
 """Renvoie le nombre d'arêtes du graphe."""
 nb_edges(graph::AbstractGraph) = length(graph.edges)
 
+
 """Affiche un graphe"""
 function show(graph::AbstractGraph)
   println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
