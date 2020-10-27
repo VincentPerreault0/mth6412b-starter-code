@@ -15,18 +15,17 @@ Exemple:
 struct Edge
   weight::Float64
   nodes::Tuple{AbstractNode,AbstractNode}
-  flag:: Bool
-end
-
-function Edge(weight:: Float64, nodes::Tuple{AbstractNode,AbstractNode})
-  return(Edge(weight, nodes, false))
 end
 
 """Renvoie le poids de l'arête."""
-weight(edge::Edge) = edge.weight
+function weight(edge::Edge)
+    edge.weight
+end
 
 """Renvoie les noeuds aux extrémités de l'edge."""
-nodes(edge::Edge) = edge.nodes
+function nodes(edge::Edge)
+    edge.nodes
+end
 
 """Affiche une arête."""
 function show(edge::Edge)
