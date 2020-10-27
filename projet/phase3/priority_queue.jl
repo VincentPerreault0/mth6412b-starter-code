@@ -28,8 +28,9 @@ end
 popfirst!(q::AbstractQueue) = popfirst!(q.items)
 
 """Indique si la file est vide."""
-is_empty(q::AbstractQueue) = length(q.items) == 0
-
+function is_empty(q::AbstractQueue)
+    length(q.items) == 0
+end
 """Donne le nombre d'éléments sur la file."""
 length(q::AbstractQueue) = length(q.items)
 
@@ -38,7 +39,7 @@ function show(q::AbstractQueue)
     show(q.items)
 end
 
-"""File de priorité."""
+"""File de priorité (pour les noeuds)"""
 mutable struct PriorityQueue{T} <: AbstractQueue{T}
     items::Vector{T}
 end
