@@ -35,7 +35,7 @@ g3 = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, no
 #show(g3)
 #println()
 
-mst = NewMinSpanTree(g3, true)
+mst = new_min_span_tree(g3, true)
 println()
 
 show(mst)
@@ -51,3 +51,58 @@ println()
 @test contains_edge(mst,edge7) == true
 @test contains_edge(mst,edge11) == true
 @test contains_edge(mst,edge13) == true
+
+#Initialisation
+println("Testing Graph methods...")
+println()
+
+node1 = Node("Joe", 1)
+node1.minweight=3
+node2 = Node("Steve", 2)
+node2.minweight=1
+node2.parent=node1
+node3 = Node("Jill", 3))
+node3.minweight=5
+node4=Node("James", 7)
+node4.minweight=1
+edge1 = Edge(500, (node1, node2))
+edge2 = Edge(1000, (node2, node3))
+
+#Tests pour nouvelles fonctions de Node
+
+#Test pour nouvelles fonctions de Edge
+
+
+#Tests pour PriorityQueue
+q=PriorityQueue{Node}()
+
+@test is_empty(q) == true
+@test items(q)==[]
+@nb_items(q)==0
+@test contains_item(q,node1) == false
+@test contains_edge(q,edge1) == false
+
+push!(q, node1)
+
+@test nb_items(q) == 1
+@test is_empty(q) == false
+@test items(q)==[node1]
+@test contains_item(q,node1) == true
+
+push!(q,node2)
+tmp=popfirst!(q)
+
+@test tmp==node2
+@test nb_items(q)==1
+@test contains_item(q,node2) == false
+@test contains_item(q,node1) == true
+
+push!(q, node2)
+push!(q, node4)
+
+tmp2=popfirst!(q, node2)
+
+@test tmp2 == node2
+@test contains_item(q,node4) == true
+@test nb_edges(g1) == 2
+
