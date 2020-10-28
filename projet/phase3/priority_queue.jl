@@ -6,30 +6,24 @@ import Base.popfirst!
 """ type abstrait de file de priorite"""
 abstract type AbstractQueue{T} end
 
-"""Type représentant une file avec des éléments de type T."""
-mutable struct Queue{T} <: AbstractQueue{T}
+"""File de priorité (utilise pour les noeuds ou les edges)"""
+mutable struct PriorityQueue{T} <: AbstractQueue{T}
     items::Vector{T}
 end
 
-Queue{T}() where T = Queue(T[])
-
-""" Renvoie les elements de la file"""
-function items(q::AbstractQueue)
-    q.items
+""" Cree une file de priorite vide"""
+function PriorityQueue{T}() where T
+    PriorityQueue(T[])
 end
-
-"""Ajoute `item` à la fin de la file `s`."""
-function push!(q::AbstractQueue{T}, item::T) where T
-    push!(q.items, item)
-    q
-end
-
-"""Retire et renvoie l'objet du début de la file."""
-popfirst!(q::AbstractQueue) = popfirst!(q.items)
 
 """Indique si la file est vide."""
 function is_empty(q::AbstractQueue)
     length(q.items) == 0
+end
+
+""" Renvoie les elements de la file"""
+function items(q::AbstractQueue)
+    q.items
 end
 
 """Donne le nombre d'éléments sur la file."""
@@ -37,21 +31,26 @@ function nb_items(q::AbstractQueue)
     return(length(q.items))
 end
 
-
-"""File de priorité (pour les noeuds)"""
-mutable struct PriorityQueue{T} <: AbstractQueue{T}
-    items::Vector{T}
+"""renvoie true si la file contien l objet"""
+function contains_item(q::PriorityQueue{T}, item::T) where T
+    return(item in q.items)
 end
 
-function maximum(q::AbstractQueue)
-    return(maximum(items(q)))
+"""Ajoute `item` à la fin de la file."""
+function push!(q::AbstractQueue{T}, item::T) where T
+    push!(q.items, item)
+    q
 end
 
-function PriorityQueue{T}() where T
-    PriorityQueue(T[])
+"""renvoie le plus petit element de la file
+attention les fonctions isless et == doivent etre definies pour le type d objet de items"""
+function minimum(q::AbstractQueue)
+    return(minimum(items(q)))
 end
 
-"""Retire et renvoie l'élément ayant la plus haute priorité."""
+"""Retire et renvoie un élément ayant la plus haute priorité.
+Ici la priorite est l ordre decroissant. 
+Attention: les fonctions isless et == doivent etre definies pour le type d objet de items"""
 function popfirst!(q::PriorityQueue)
     highest = minimum(items(q))
     idx = findall(x -> x == highest, q.items)[1]
@@ -71,7 +70,7 @@ function popfirst!(q:: PriorityQueue{Edge}, node:: Node)
         end
     end
     if tmp==-1
-        println("il y a un probleme avec pop")
+        println("il y a un probleme avec popfirst!")
     end 
     tmp2=items(q)[tmp]
     deleteat!(q.items, tmp)
