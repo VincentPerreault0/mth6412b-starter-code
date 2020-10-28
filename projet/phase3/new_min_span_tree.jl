@@ -1,6 +1,6 @@
 include("../phase2/graph.jl")
 
-function NewMinSpanTree(graph :: AbstractGraph{T}, verbose:: Bool) where T 
+function new_min_span_tree(graph :: AbstractGraph{T}, verbose:: Bool) where T 
     #liste de liens dans le minimum spanning tree
     new_edges=Vector{Edge}()
 
