@@ -1,5 +1,4 @@
 include("minimum_spanning_tree.jl")
-include("new_min_span_tree.jl")
 
 filenames = ["instances/stsp/bayg29.tsp",
             "instances/stsp/bays29.tsp",
@@ -22,7 +21,5 @@ for filename in filenames
 
   mst = find_minimum_spanning_tree(graph, false)
   println(name(mst), " has ", nb_nodes(mst), " nodes and ", nb_edges(mst), " edges.")
-  mst2=NewMinSpanTree(graph, false)
-  println(name(mst2), " has ", nb_nodes(mst2), " nodes and ", nb_edges(mst2), " edges.")
   println()
 end
