@@ -48,7 +48,7 @@ function show(graph::AbstractGraph)
 end
 
 """Vérifie si le graphe contient un certain noeud."""
-function contains_node(graph::AbstractGraph{T}, node::Node{T}) where T
+function contains_node(graph::AbstractGraph{T}, node::AbstractNode{T}) where T
     node in graph.nodes
 end
 
