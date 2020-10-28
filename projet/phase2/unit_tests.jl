@@ -1,6 +1,7 @@
 using Test
+include("graph.jl")
 include("minimum_spanning_tree.jl")
-include("new_min_span_tree.jl")
+include("../phase3/new_min_span_tree.jl")
 
 # Tests pour les méthodes de Graph
 println("Testing Graph methods...")
@@ -26,6 +27,7 @@ add_node!(g1,node1)
 @test contains_node(g1,node1) == true
 
 add_edge!(g1,edge1)
+add_node!(g1, node2)
 
 @test nb_edges(g1) == 1
 @test contains_edge(g1,edge1) == true
@@ -64,6 +66,13 @@ cc1 = create_connected_component_from_node(node1)
 @test contains_node(cc1,node1) == true
 @test nb_edges(cc1) == 0
 
+@test (node3 in cc1.nodes)==false
+show(edge2)
+for node in cc1.nodes
+    show(node)
+end
+@test nb_nodes(cc1)==1
+@test contains_node(cc1,node2)==false
 @test contains_edge_nodes(cc1, edge2) == 0
 @test contains_edge_nodes(cc1, edge1) == 1
 
@@ -181,21 +190,21 @@ g3 = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, no
 #show(g3)
 #println()
 
-mst = NewMinSpanTree(g3, true)
+mst1 = new_min_span_tree(g3, true)
 println()
 
 show(mst)
 println()
 
-@test nb_nodes(mst) == nb_nodes(g3)
-@test nb_edges(mst) == 8
-@test contains_edge(mst,edge1) == true
-@test contains_edge(mst,edge2) == true || contains_edge(mst,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
-@test contains_edge(mst,edge3) == true
-@test contains_edge(mst,edge4) == true
-@test contains_edge(mst,edge6) == true
-@test contains_edge(mst,edge7) == true
-@test contains_edge(mst,edge11) == true
-@test contains_edge(mst,edge13) == true
+@test nb_nodes(mst1) == nb_nodes(g3)
+@test nb_edges(mst1) == 8
+@test contains_edge(mst1,edge1) == true
+@test contains_edge(mst1,edge2) == true || contains_edge(mst1,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
+@test contains_edge(mst1,edge3) == true
+@test contains_edge(mst1,edge4) == true
+@test contains_edge(mst1,edge6) == true
+@test contains_edge(mst1,edge7) == true
+@test contains_edge(mst1,edge11) == true
+@test contains_edge(mst1,edge13) == true
 
 println("All tests complete!")
