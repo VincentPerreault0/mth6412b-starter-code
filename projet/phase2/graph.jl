@@ -54,7 +54,9 @@ end
 
 """Ajoute un noeud au graphe."""
 function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
-  push!(graph.nodes, node)
+  if not node in graph.nodes
+    push!(graph.nodes, node)
+  end
   graph
 end
 
