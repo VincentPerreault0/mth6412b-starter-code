@@ -1,8 +1,5 @@
-import Base.isless, Base.==
-include("../phase1/node.jl")
-
 import Base.show
-
+include("node.jl")
 """Type représentant les arêtes d'un graphe.
 
 Exemple:
@@ -34,19 +31,4 @@ function show(edge::Edge)
     print("  ")
     show(node)
   end
-end
-
-"""definit inegalite pour les files """
-function isless(p::Edge, q::Edge) 
-     return(weight(p) < weight(q))
-end
-
-""" definit egalite pour les files"""
-function ==(p::Edge, q::Edge) 
-    return(weight(p) == weight(q))
-end
-
-""" indique si un noeud est dans une arrete ou pas"""
-function contains_node(node::AbstractNode, edge:: Edge)
-  return(node in nodes(edge))
 end
