@@ -26,7 +26,7 @@ create_connected_component_from_node(node::Node{T}) where T = ConnectedComponent
 """Calcule le nombre de noeuds d'un lien contenus dans la composante connexe."""
 function contains_edge_nodes(c_component::ConnectedComponent{T}, edge::Edge) where T
   nb_nodes_contained = 0
-  for node in edge.nodes
+  for node in nodes(edge)
     if contains_node(c_component, node)
       nb_nodes_contained += 1
     end
