@@ -1,4 +1,4 @@
-include("minimum_spanning_tree.jl")
+include("../phase2/minimum_spanning_tree.jl")
 include("new_min_span_tree.jl")
 
 filenames = ["instances/stsp/bayg29.tsp",
