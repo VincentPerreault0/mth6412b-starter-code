@@ -31,7 +31,7 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
     s.minweight=0
     q=PriorityQueue{Node}()
     for node in nodes(graph)
-        push!(q, node)
+        add_item!(q, node)
     end
 
     #initialisation de la file de priorite des arretes
@@ -44,7 +44,7 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
 
         #on ajoute l arrete correspondante aux arretes du minimum spanning tree
         egde_tmp=popfirst!(p,u)
-        push!(new_edges, edge_tmp)
+        add_item!(new_edges, edge_tmp)
 
         #on actualise les valeurs des noeuds voisins 
         for v in neigbours(u)
@@ -53,7 +53,7 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
                     if u in edges(node) && v in edges(node) && weight(edge)<minweight(v)
                         v.parent=u
                         v.minweight=weight(edge)
-                        push!(p, edge)
+                        add_item!(p, edge)
                     end
                     break
                 end
