@@ -87,11 +87,12 @@ function popfirst!(q:: PriorityQueue{Edge}, node:: Node)
     end
     if tmp==-1# si on est la c'est que les edge de poids min ne vont jamais etre utilise
         for i in idx
-            deleteat!(q.items, tmp)
+            deleteat!(q.items, i)
         end
-        popfirst!(q, node)#on refait sur la file updatee
-    end 
-    edge=items(q)[tmp]
-    deleteat!(q.items, tmp)
-    return(edge)
+        return(popfirst!(q, node))#on refait sur la file updatee 
+    else
+        edge=items(q)[tmp]
+        deleteat!(q.items, tmp)
+        return(edge)
+    end
 end
