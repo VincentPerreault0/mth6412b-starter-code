@@ -37,8 +37,7 @@ node2.parent=node1
 @test node3.parent==node1
 
 #Test pour New Min Span Tree
-#println("Testing New Minimum Spanning Tree Kruskal Algorithm with range and depth")
-println("Tetsing new minimal spanning tree algorithm...")
+println("Testing New Minimum Spanning Tree Kruskal Algorithm with range and depth...")
 # Exemple vu en cours
 nodeA = Node("a", nothing)
 nodeB = Node("b", nothing)
