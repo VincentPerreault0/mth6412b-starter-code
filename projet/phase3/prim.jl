@@ -9,6 +9,9 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
     end
     #initialisation de la liste d'arretes de l arbre
     new_edges=Edge[]
+
+    #initialisation des dictionnaires contenant les listes d adjacences des noeuds
+    #et les arretes incidentes pour chaque noeud
     dict_edges=Dict{Node, Vector{Edge}}()
     dict_nodes=Dict{Node, Vector{Node}}()
     for node in nodes(graph)
