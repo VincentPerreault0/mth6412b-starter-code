@@ -1,5 +1,5 @@
 
-include("../phase1/node.jl")
+#include("../phase1/node.jl")
 include("../phase1/edge.jl")
 include("../phase1/read_stsp.jl")
 
@@ -54,10 +54,12 @@ end
 
 """Ajoute un noeud au graphe."""
 function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
-  if not node in graph.nodes
+  if contains_node(graph,node)
+    return(graph)
+  else
     push!(graph.nodes, node)
+    return(graph)
   end
-  graph
 end
 
 """Vérifie si le graphe contient un certain lien."""
