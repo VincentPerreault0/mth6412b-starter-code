@@ -1,4 +1,4 @@
-include("../phase1/edge.jl")
+#include("../phase1/edge.jl")
 import Base.popfirst!
 
 """ type abstrait de file de priorite"""
@@ -40,7 +40,7 @@ function add_item!(q::AbstractQueue{T}, item::T) where T
         return(q)
     end
     push!(q.items, item)
-    q
+    return(q)
 end
 
 """renvoie le plus petit element de la file"""
@@ -55,7 +55,7 @@ function minimum_item(q::AbstractQueue, type ::Type )
     elseif type==Edge
         for edge in q.items[2:end]
             if weight(edge)<weight(min)
-                min=node
+                min=edge
             end
         end
     end
@@ -85,8 +85,11 @@ function popfirst!(q:: PriorityQueue{Edge}, node:: Node)
             break
         end
     end
-    if tmp==-1
-        println("il y a un probleme avec popfirst!")
+    if tmp==-1# si on est la c'est que les edge de poids min ne vont jamais etre utilise
+        for i in idx
+            deleteat!(q.items, tmp)
+        end
+        popfirst!(q, node)#on refait sur la file updatee
     end 
     edge=items(q)[tmp]
     deleteat!(q.items, tmp)
