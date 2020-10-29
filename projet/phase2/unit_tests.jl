@@ -1,5 +1,4 @@
 using Test
-include("graph.jl")
 include("minimum_spanning_tree.jl")
 include("../phase3/new_min_span_tree.jl")
 
@@ -54,7 +53,6 @@ g2 = Graph("g2", [node1, node2, node3], [edge1, edge2])
 @test nodes(g1) == nodes(g2)
 @test edges(g1) == edges(g2)
 
-
 # Tests pour les méthodes de Connected Component
 println("Testing ConnectedComponent methods...")
 println()
@@ -66,11 +64,10 @@ cc1 = create_connected_component_from_node(node1)
 @test contains_node(cc1,node1) == true
 @test nb_edges(cc1) == 0
 
-@test (node3 in cc1.nodes)==false
+@test (node3==node1)==false
+@test contains_node(cc1,node3)==false
 show(edge2)
-for node in cc1.nodes
-    show(node)
-end
+
 @test nb_nodes(cc1)==1
 @test contains_node(cc1,node2)==false
 @test contains_edge_nodes(cc1, edge2) == 0
@@ -154,57 +151,5 @@ println()
 @test contains_edge(mst,edge7) == true
 @test contains_edge(mst,edge11) == true
 @test contains_edge(mst,edge13) == true
-
-#Test pour New Min Span Tree
-println("Testing New Minimum Spanning Tree Kruskal Algorithm with range and depth")
-println()
-
-# Exemple vu en cours
-nodeA = Node("a", nothing)
-nodeB = Node("b", nothing)
-nodeC = Node("c", nothing)
-nodeD = Node("d", nothing)
-nodeE = Node("e", nothing)
-nodeF = Node("f", nothing)
-nodeG = Node("g", nothing)
-nodeH = Node("h", nothing)
-nodeI = Node("i", nothing)
-
-edge1 = Edge(4,(nodeA,nodeB))
-edge2 = Edge(8,(nodeB,nodeC))
-edge3 = Edge(7,(nodeC,nodeD))
-edge4 = Edge(9,(nodeD,nodeE))
-edge5 = Edge(14,(nodeD,nodeF))
-edge6 = Edge(4,(nodeC,nodeF))
-edge7 = Edge(2,(nodeC,nodeI))
-edge8 = Edge(11,(nodeB,nodeH))
-edge9 = Edge(8,(nodeA,nodeH))
-edge10 = Edge(7,(nodeH,nodeI))
-edge11 = Edge(1,(nodeG,nodeH))
-edge12 = Edge(6,(nodeG,nodeI))
-edge13 = Edge(2,(nodeF,nodeG))
-edge14 = Edge(10,(nodeE,nodeF))
-
-g3 = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH, nodeI], [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14])
-
-#show(g3)
-#println()
-
-mst1 = new_min_span_tree(g3, true)
-println()
-
-show(mst)
-println()
-
-@test nb_nodes(mst1) == nb_nodes(g3)
-@test nb_edges(mst1) == 8
-@test contains_edge(mst1,edge1) == true
-@test contains_edge(mst1,edge2) == true || contains_edge(mst1,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
-@test contains_edge(mst1,edge3) == true
-@test contains_edge(mst1,edge4) == true
-@test contains_edge(mst1,edge6) == true
-@test contains_edge(mst1,edge7) == true
-@test contains_edge(mst1,edge11) == true
-@test contains_edge(mst1,edge13) == true
 
 println("All tests complete!")
