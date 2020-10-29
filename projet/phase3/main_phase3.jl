@@ -1,5 +1,6 @@
-include("../phase2/minimum_spanning_tree.jl")
+include("../phase2/graph.jl")
 include("new_min_span_tree.jl")
+include("prim.jl")
 
 filenames = ["instances/stsp/bayg29.tsp",
             "instances/stsp/bays29.tsp",
@@ -19,10 +20,9 @@ filenames = ["instances/stsp/bayg29.tsp",
 for filename in filenames
   graph = create_graph_from_stsp_file(filename, false)
   println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
-
-  mst = find_minimum_spanning_tree(graph, false)
+  mst = new_min_span_tree(graph, false)
   println(name(mst), " has ", nb_nodes(mst), " nodes and ", nb_edges(mst), " edges.")
-  mst2=NewMinSpanTree(graph, false)
+  mst2=prim(graph,nodes(graph)[10])
   println(name(mst2), " has ", nb_nodes(mst2), " nodes and ", nb_edges(mst2), " edges.")
   println()
 end

@@ -1,5 +1,4 @@
 import Base.show
-include("node.jl")
 """Type représentant les arêtes d'un graphe.
 
 Exemple:
