@@ -6,7 +6,7 @@ include("prim.jl")
 
 #Tests pour nouvelles fonctions de Node
 println("Testing Node methods...")
-node1=Node("Joe", 1,5,nothing,6, Node{Int64}[])
+node1=Node("Joe", 1,5,nothing,6)
 node2=Node("James",3)
 node3=Node("Matt", 6, 2)
 node4=Node("Rebeca",9, node3)
@@ -16,25 +16,19 @@ node4=Node("Rebeca",9, node3)
 @test rank(node1)==5
 @test parent(node1)===nothing
 @test minweight(node1)==6
-@test length(node1.neighbours)==0
 
 @test data(node2)==3
 @test rank(node2)==0
 @test parent(node2)===nothing
 @test minweight(node2)==10000
-@test length(node2.neighbours)==0
 
 @test data(node3)==6
 @test rank(node3)==2
 @test parent(node2)===nothing
 @test minweight(node2)==10000
-@test length(node3.neighbours)==0
 
 @test parent(node4)===node3
 @test minweight(node4)==10000
-@test length(node4.neighbours)==0
-add_neighbour(node4,node2)
-@test neighbours(node4)==[node2]
 
 node3.parent=node2
 node2.parent=node1
@@ -89,7 +83,7 @@ mst = new_min_span_tree(g3, false)
 
 #Tests pour PriorityQueue
 println("Testing PriorityQueue methods...")
-node1=Node("Joe", 1,5,nothing,6, Node{Int64}[])
+node1=Node("Joe", 1,5,nothing,6)
 node1.minweight=2
 node2=Node("James",3)
 node2.minweight=1
