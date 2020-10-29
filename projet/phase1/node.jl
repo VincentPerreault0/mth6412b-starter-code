@@ -1,6 +1,4 @@
 import Base.show
-import Base.isless, Base.==
-import Base.push!
 
 """Type abstrait dont d'autres types de noeuds dériveront."""
 abstract type AbstractNode{T} end
@@ -18,7 +16,7 @@ mutable struct Node{T} <: AbstractNode{T}
   name::String
   data::T
   rank::Int64
-  parent ::Union{Nothing,Node{T}} #une racine n a pas de parent
+  parent ::Union{Nothing,Node{T}}
   minweight::Int64
   neighbours::Vector{Node{T}}
 end
@@ -33,7 +31,7 @@ function Node(name:: String, data, rank :: Int64)
 end
 
 function Node(name:: String, data, parent :: Node)
- return(Node{typeof(data)}(name, data, 0, parent, 100000,[]))
+ return(Node{typeof(data)}(name, data, 0, parent, 10000,[]))
 end
 
 # on présume que tous les noeuds dérivant d'AbstractNode
@@ -61,8 +59,11 @@ function neighbours(node:: AbstractNode)
   return(node.neighbours)
 end
 
-""" ajoute un noeud a la liste adjacence de node"""
+""" ajoute un noeud a la liste adjacence de node, sauf s il y est deja"""
 function add_neighbour(node::Node{T}, neighbour::Node{T}) where T
+  if neighbour in node.neighbours
+    return(node)
+  end
   push!(node.neighbours, neighbour)
   return(node)
 end
@@ -84,16 +85,6 @@ function find_root(node :: Node{T}, nodes=nothing) where T
     find_root(parent(node), nodes)
   end 
 end 
-
-"""definit inegalite pour les files """
-function isless(p::AbstractNode, q::AbstractNode) 
-     return(minweight(p) < minweight(q))
-end
-
-""" definit egalite pour les files"""
-function ==(p::AbstractNode, q::AbstractNode) 
-    return(minweight(p) == minweight(q))
-end
 
 """Affiche un noeud."""
 function show(node::AbstractNode)
