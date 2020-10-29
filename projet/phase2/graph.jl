@@ -1,5 +1,3 @@
-
-#include("../phase1/node.jl")
 include("../phase1/edge.jl")
 include("../phase1/read_stsp.jl")
 
@@ -68,14 +66,12 @@ contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
 """Ajoute une arête au graphe."""
 function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
   push!(graph.edges, edge)
-
   # Si les noeuds du lien ne font pas partie du graphe, les rajouter
   for node in edge.nodes
     if !contains_node(graph, node)
       add_node!(graph, node)
     end
   end
-
   graph
 end
 

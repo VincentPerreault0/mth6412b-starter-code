@@ -1,4 +1,5 @@
 using Test
+include("../phase2/graph.jl")
 include("new_min_span_tree.jl")
 include("prim.jl")
 
@@ -127,6 +128,7 @@ tmp=popfirst!(q, Node)
 #Test pour PriorityQueue avec Edge comme item 
 edge1=Edge(100, (node1,node2))
 edge2=Edge(100, (node2,node3))
+edge3=Edge(1, (node3, node1))
 node3.parent=node2
 p=PriorityQueue{Edge}()
 
@@ -150,6 +152,10 @@ add_item!(p, edge2)
 add_item!(p,edge1)
 
 @test popfirst!(p, node3)==edge2
+
+add_item!(p,edge3)
+
+@test minimum_item(p,Edge)==edge3
 
 #Tests pour algorithme de Prim 
 println("Testing Prim's algorithm...")

@@ -1,4 +1,4 @@
-include("../phase2/graph.jl")
+#include("../phase2/graph.jl")
 
 function new_min_span_tree(graph :: AbstractGraph{T}, verbose:: Bool) where T 
     #liste de liens dans le minimum spanning tree
