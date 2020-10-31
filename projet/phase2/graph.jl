@@ -66,14 +66,18 @@ contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
 
 """Ajoute une arête au graphe."""
 function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
-  push!(graph.edges, edge)
-  # Si les noeuds du lien ne font pas partie du graphe, les rajouter
-  for node in edge.nodes
-    if !contains_node(graph, node)
-      add_node!(graph, node)
+  if contains_edge(graph, edge)
+    return(graph)
+  else
+    push!(graph.edges, edge)
+    # Si les noeuds du lien ne font pas partie du graphe, les rajouter
+    for node in edge.nodes
+      if !contains_node(graph, node)
+        add_node!(graph, node)
+      end
     end
+    return(graph)
   end
-  graph
 end
 
 """Structure concrète d'un graphe."""
