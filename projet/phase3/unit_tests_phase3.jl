@@ -36,6 +36,22 @@ node2.parent=node1
 @test node2.parent==node1
 @test node3.parent==node1
 
+#Test pour nouvelles fonctions de Graph 
+g=create_empty_graph("BigG", Int)
+add_node!(g,node1)
+add_node!(g,node1)
+
+@test nb_nodes(g)==1
+@test contains_node(g, node1)==true
+@test total_weight(g)==0 
+
+edge1=Edge(1000.0, (node1,node2))
+add_edge!(g, edge1)
+
+@test nb_nodes(g)==2
+@test nb_edges(g)==1
+@test total_weight(g)==1000.0
+
 #Test pour New Min Span Tree
 println("Testing New Minimum Spanning Tree Kruskal Algorithm with range and depth...")
 # Exemple vu en cours
@@ -180,19 +196,45 @@ edge14 = Edge(10,(nodeE,nodeF))
 
 g3 = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH, nodeI], [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14])
 #show(g3)
-mst = prim(g3, nodeA)
-#show(mst)
+mst_prim = prim(g3, nodeA)
+#show(mst_prim)
 
-@test name(mst)=="Minimum Spanning tree from Prim alg of Class Example"
-@test nb_nodes(mst) == nb_nodes(g3)
-@test nb_edges(mst) == 8
-@test contains_edge(mst,edge1) == true
-@test contains_edge(mst,edge2) == true || contains_edge(mst,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
-@test contains_edge(mst,edge3) == true
-@test contains_edge(mst,edge4) == true
-@test contains_edge(mst,edge6) == true
-@test contains_edge(mst,edge7) == true
-@test contains_edge(mst,edge11) == true
-@test contains_edge(mst,edge13) == true
+@test name(mst_prim)=="Minimum Spanning tree from Prim alg of Class Example"
+@test nb_nodes(mst_prim) == nb_nodes(g3)
+@test nb_edges(mst_prim) == 8
+@test contains_edge(mst_prim,edge1) == true
+@test contains_edge(mst_prim,edge2) == true || contains_edge(mst_prim,edge9) == true  # ces 2 liens ont le même poids dans le graphe et, selon l'ordre utilisé dans sa construction explicite, l'algorithme de Kruskal va finir par en utiliser un et un seul pour son arbre de recouvrement minimal
+@test contains_edge(mst_prim,edge3) == true
+@test contains_edge(mst_prim,edge4) == true
+@test contains_edge(mst_prim,edge6) == true
+@test contains_edge(mst_prim,edge7) == true
+@test contains_edge(mst_prim,edge11) == true
+@test contains_edge(mst_prim,edge13) == true
 
+println("Testing with stsp instances...")
+println()
+filenames = ["instances/stsp/bayg29.tsp",
+            "instances/stsp/bays29.tsp",
+            "instances/stsp/brazil58.tsp",
+            "instances/stsp/brg180.tsp",
+            "instances/stsp/dantzig42.tsp",
+            "instances/stsp/fri26.tsp",
+            "instances/stsp/gr17.tsp",
+            "instances/stsp/gr21.tsp",
+            "instances/stsp/gr24.tsp",
+            "instances/stsp/gr48.tsp",
+            "instances/stsp/gr120.tsp",
+            "instances/stsp/hk48.tsp",
+            "instances/stsp/pa561.tsp",
+            "instances/stsp/swiss42.tsp"]
+
+for i=1:length(filenames)
+  graph = create_graph_from_stsp_file(filenames[i], false)
+  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+  mst1 = new_min_span_tree(graph, false)
+  println(name(mst1), " has ", nb_nodes(mst1), " nodes and ", nb_edges(mst1), " edges and weight ",total_weight(mst1))
+  mst2=prim(graph,nodes(graph)[10])
+  println(name(mst2), " has ", nb_nodes(mst2), " nodes and ", nb_edges(mst2), " edges and weight ", total_weight(mst2))
+  println()
+end
 println("All tests complete")
