@@ -74,7 +74,8 @@ end
 """Retire et renvoie l'élément ayant la plus haute priorité
  et qui contient le noeud choisit et son parent.
  Si il y a plusieurs edge de meme poids, on choisit celui correspondant
- au noeud choisit."""
+ au noeud choisit.Si aucum edge de poids minimal ne correspond au noeud,
+on supprime les edge de poids minimal et on reitere"""
 function popfirst!(q:: PriorityQueue{Edge}, node:: Node)
     min= minimum_item(q,Edge)
     idx = findall(x -> weight(x) == weight(min), q.items)
