@@ -80,6 +80,19 @@ function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
   end
 end
 
+""" donne la somme des poids des arretes d un graphe"""
+function total_weight(graph:: AbstractGraph)
+  if nb_nodes(graph)==0
+    return(0)
+  else
+    s=0
+    for edge in graph.edges
+      s+=weight(edge)
+    end
+    return(s)
+  end
+end 
+
 """Structure concrète d'un graphe."""
 mutable struct Graph{T} <: AbstractGraph{T}
   name::String
