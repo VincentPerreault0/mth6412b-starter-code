@@ -70,6 +70,23 @@ function find_root(node :: Node{T}, nodes=nothing) where T
   end 
 end 
 
+"""fonction qui prend en entre les racines de deux composantes connexes et les unis"""
+function union_roots(root1::Node{T}, root2::Node{T}) where T
+  if root1==root2
+    return
+  else
+    if rank(root1)<rank(root2)
+      root1.parent=root2
+    elseif rank(root2)<rank(root1) 
+        root2.parent=root1
+    else
+        root2.parent=root1
+        root1.rank+=1
+    end
+  end 
+  return
+end 
+
 """Affiche un noeud."""
 function show(node::AbstractNode)
   println("Node ", name(node), ", data: ", data(node), " rank: ", rank(node), " parent: ", parent(node))
