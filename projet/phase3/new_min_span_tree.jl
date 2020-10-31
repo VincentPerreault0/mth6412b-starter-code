@@ -27,14 +27,7 @@ function new_min_span_tree(graph :: AbstractGraph{T}, verbose:: Bool) where T
             end
 
             #comparaison du rang et actualisation du pointeur vers la racine
-            if rank(root1)<rank(root2)
-                root1.parent=root2
-            elseif rank(root2)<rank(root1) 
-                root2.parent=root1
-            else
-                root2.parent=root1
-                root1.rank+=1
-            end
+            union_roots(root1,root2)
 
             #ajout de l arrete a l arbre
             push!(new_edges, edge)
