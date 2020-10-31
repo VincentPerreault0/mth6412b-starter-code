@@ -7,8 +7,11 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
     if (s in nodes(graph))==false
         return
     end
-    #initialisation de la liste d'arretes de l arbre
+    #initialisation des listes
     new_edges=Edge[]
+    s.minweight=0
+    q=PriorityQueue{Node}()
+    p=PriorityQueue{Edge}()
 
     #initialisation des dictionnaires contenant les listes d adjacences des noeuds
     #et les arretes incidentes pour chaque noeud
@@ -17,7 +20,9 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
     for node in nodes(graph)
         dict_edges[node]=Edge[]
         dict_nodes[node]=Node{typeof(node)}[]
+        add_item!(q,node)
     end
+
     # Calcul des listes d adjacence
     for edge in edges(graph)
         node1=nodes(edge)[1]
@@ -28,22 +33,12 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
         push!(dict_edges[node2],edge)
     end 
 
-    #initialisation 
-    s.minweight=0
-    q=PriorityQueue{Node}()
-    for node in nodes(graph)
-        add_item!(q,node)
-    end
-
-    #initialisation de la file de priorite des arretes
-    p=PriorityQueue{Edge}()
-
     #Boucle
     while nb_items(q)>0
         #on sort un noeud de minweight minimal
         u=popfirst!(q, Node)
         #on ajoute l arrete correspondante aux arretes du minimum spanning tree
-        if (u==s)==false
+        if (u==s)==false #si u ==s on est a la premiere iteration et p est vide
             tmp=popfirst!(p,u)
             push!(new_edges,tmp)
         end
