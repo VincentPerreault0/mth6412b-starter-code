@@ -8,7 +8,7 @@ using InteractiveUtils
 md"# Rapport du projet d'Implémentation d'algo. de rech. opérationnelle
 ## Phase 3 : 02/11/2020
 Antonin Kenens, Vincent Perreault et Laura Kolcheva
-Dépôt github à l'adresse suivante : https://github.com/VincentPerreault0/mth6412b-starter-code.git
+Dépôt github à l'adresse suivante : https://github.com/VincentPerreault0/mth6412b-starter-code/tree/Phase3
 ### Question 1 : Implémenter les deux heuristiques d'accélération et répondre à la question sur le rang.
 Nous avons réutilisé nos structures de données précédentes pour les noeuds et les liens. Nous avons modifié la structure de donnée des noeuds pour prendre en compte le parent de chaque noeud. Les composantes connexes sont donc des ensembles de noeuds qui ont des liens de parenté. La spécificité est que la racine d'une composant connexe n'a pas de parent. Nous avons fait ce choix pour éviter les références circulaires."
 
