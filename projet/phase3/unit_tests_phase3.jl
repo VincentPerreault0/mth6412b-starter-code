@@ -210,7 +210,7 @@ mst_prim = prim(g3, nodeA)
 @test contains_edge(mst_prim,edge7) == true
 @test contains_edge(mst_prim,edge11) == true
 @test contains_edge(mst_prim,edge13) == true
-
+show(nodeF)
 
 println("Testing with stsp instances...")
 println()
