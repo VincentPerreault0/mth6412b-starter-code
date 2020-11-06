@@ -1,24 +1,35 @@
 include("../phase2/graph.jl")
 include("rsl.jl")
 
+using Test
+
 node1=Node("1",5)
 node2=Node("2", 10)
 node3=Node("3", 22)
 node4=Node("4", 11)
+node5=Node("5", 11)
 edge1=Edge(10.0, (node1,node2))
 edge2=Edge(21.0, (node2,node3))
 edge3=Edge(10.0, (node2,node4))
-
+edge4=Edge(12.0, (node3,node5))
 dict_edges=Dict{Node, Vector{Edge}}()
+dict_edges[node2]=Vector{Edge}()
 dict_edges[node2]=[edge2,edge3]
-q=find_children(node2, dict_edges,PriorityQueue{Node}())
-for node in items(q)
-    show(node)
-end
+dict_edges[node3]=[edge4, edge2]
+dict_edges[node4]=[edge3]
+dict_edges[node5]=[edge4]
+q=find_children(node2, dict_edges,Vector{Node{Int64}}())
+println(q)
+@test popfirst!(q)==node2
+@test popfirst!(q)==node3
+@test popfirst!(q)==node5
+@test popfirst!(q)==node4
 
-graph=Graph("graph Test", [node1, node2,node3,node4], [edge1,edge2,edge3])
+graph=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1,edge2,edge3,edge4])
+q=rsl(graph, node1)
+println(q)
 
-print("Testing preordre function...")
+println("Testing preordre function...")
 # Exemple vu en cours
 nodeA = Node("a", nothing)
 nodeB = Node("b", nothing)

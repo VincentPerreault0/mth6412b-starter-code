@@ -55,6 +55,5 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
             end
         end
     end
-    g=Graph("Minimum Spanning tree from Prim alg of "*name(graph), nodes(graph), new_edges)
-    return(g)
+    return(Graph("Minimum Spanning tree from Prim alg of "*name(graph), nodes(graph), new_edges))
 end
