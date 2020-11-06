@@ -5,6 +5,7 @@ include("priority_queue.jl")
 un minimal spanning tree par l algorithme de Prim"""
 function prim(graph :: AbstractGraph, s :: AbstractNode)
     if (s in nodes(graph))==false
+        println("la source doit etre un noeud du graphe")
         return
     end
     #initialisation des listes
