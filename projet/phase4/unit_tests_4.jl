@@ -19,7 +19,7 @@ dict_edges[node3]=[edge4, edge2]
 dict_edges[node4]=[edge3]
 dict_edges[node5]=[edge4]
 q=find_children(node2, dict_edges,Vector{Node{Int64}}())
-println(q)
+
 @test popfirst!(q)==node2
 @test popfirst!(q)==node3
 @test popfirst!(q)==node5
@@ -27,7 +27,9 @@ println(q)
 
 graph=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1,edge2,edge3,edge4])
 q=rsl(graph, node1)
-println(q)
+
+@test popfirst!(q)==node1
+@test popfirst!(q)==node2
 
 println("Testing preordre function...")
 # Exemple vu en cours
@@ -57,5 +59,15 @@ edge13 = Edge(2,(nodeF,nodeG))
 edge14 = Edge(10,(nodeE,nodeF))
 
 g = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nodeH, nodeI], [edge1, edge2, edge3, edge4, edge5, edge6, edge7, edge8, edge9, edge10, edge11, edge12, edge13, edge14])
-mst = prim(g, nodeA)
+q=rsl(g, nodeA)
+@test popfirst!(q)==nodeA
+@test popfirst!(q)==nodeB
+@test popfirst!(q)==nodeC
+@test popfirst!(q)==nodeI
+@test popfirst!(q)==nodeF
+@test popfirst!(q)==nodeG
+@test popfirst!(q)==nodeH
+@test popfirst!(q)==nodeD
+@test popfirst!(q)==nodeE
 
+println("Testing complete!")
