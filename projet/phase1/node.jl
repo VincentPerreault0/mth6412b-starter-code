@@ -16,20 +16,21 @@ mutable struct Node{T} <: AbstractNode{T}
   data::T
   rank::Int64
   parent ::Union{Nothing,Node{T}}
-  minweight::Int64
+  minweight::Float64
+  number::Int64
 end
 
 """initialise un noeud uniquement avec un nom et un data""" 
 function Node(name:: String, data)
-  return(Node{typeof(data)}(name, data, 0, nothing, 10000))
+  return(Node{typeof(data)}(name, data, 0, nothing, 10000, 0))
 end
 
 function Node(name:: String, data, rank :: Int64)
- return(Node{typeof(data)}(name, data, rank, nothing, 10000))
+ return(Node{typeof(data)}(name, data, rank, nothing, 10000, 0))
 end
 
 function Node(name:: String, data, parent :: Node)
- return(Node{typeof(data)}(name, data, 0, parent, 10000))
+ return(Node{typeof(data)}(name, data, 0, parent, 10000, 0))
 end
 
 # on présume que tous les noeuds dérivant d'AbstractNode
@@ -89,5 +90,26 @@ end
 
 """Affiche un noeud."""
 function show(node::AbstractNode)
-  println("Node ", name(node), ", data: ", data(node), " rank: ", rank(node), " parent: ", parent(node))
+  if rank(node)==0 && parent(node) === nothing
+    println("Node ", name(node), ", data: ", data(node))
+  else
+    println("Node ", name(node), ", data: ", data(node), " rank: ", rank(node), " parent: ", parent(node))
+  end
+end
+
+"""Remet à 0 les valeurs du noeud autre que name et data"""
+function reset_node!(node::AbstractNode)
+  node.rank = 0
+  node.parent = nothing
+  node.minweight = 10000
+end
+
+"""Donne un numéro à un node"""
+function set_node_num!(node::AbstractNode, num::Int64)
+  node.number = num
+end
+
+"""Récupère le numéro d'un node"""
+function get_node_num(node::AbstractNode)
+  return node.number
 end

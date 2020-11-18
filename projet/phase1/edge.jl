@@ -1,3 +1,4 @@
+include("node.jl")
 import Base.show
 """Type représentant les arêtes d'un graphe.
 
@@ -8,7 +9,10 @@ Exemple:
         arete = Edge(50, noeud1, noeud2)
 
 """
-struct Edge
+
+# Changements de Edge qui devient mutable
+
+mutable struct Edge
   weight::Float64
   nodes::Tuple{AbstractNode,AbstractNode}
 end
@@ -30,4 +34,17 @@ function show(edge::Edge)
     print("  ")
     show(node)
   end
+end
+
+"""get the node numbers of an edge"""
+function get_edge_node_nums(edge::Edge)
+  e_nodes = nodes(edge)
+  node_num_1 = get_node_num(e_nodes[1])
+  node_num_2 = get_node_num(e_nodes[2])
+  return (node_num_1, node_num_2)
+end
+
+"""set new weight of an edge"""
+function set_weight!(edge::Edge, new_weight::Float64)
+  edge.weight = new_weight
 end

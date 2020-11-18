@@ -2,6 +2,7 @@ using Test
 include("../phase2/graph.jl")
 include("new_min_span_tree.jl")
 include("prim.jl")
+include("../phase4/held_karp.jl")
 
 
 #Tests pour nouvelles fonctions de Node

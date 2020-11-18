@@ -1,4 +1,4 @@
-#include("../phase1/edge.jl")
+include("../phase1/edge.jl")
 import Base.popfirst!
 
 """ type abstrait de file de priorite"""

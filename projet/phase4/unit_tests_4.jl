@@ -1,5 +1,6 @@
 include("../phase2/graph.jl")
 include("rsl.jl")
+include("held_karp.jl")
 
 using Test
 
@@ -69,5 +70,34 @@ q=rsl(g, nodeA)
 @test popfirst!(q)==nodeH
 @test popfirst!(q)==nodeD
 @test popfirst!(q)==nodeE
+
+println("Testing fonctions Held Karp")
+
+sgraph = sub_graph(graph,node3)
+sg_edges = edges(sgraph)
+for i = 1 : length(sg_edges)
+    @test !(node3 in(nodes(sg_edges[i])))
+end
+@test !(node3 in(nodes(sgraph)))
+
+@test min_weight_edges(g,nodeC)==[edge6,edge7] || min_weight_edges(g,nodeC)==[edge7,edge6]
+
+show(g)
+sgraph = sub_graph(g,nodeB)
+show(sgraph)
+mst = prim(sgraph,nodeA)
+
+mot = min_one_tree(g,nodeB)
+
+@test nb_nodes(mot) == nb_nodes(g)
+@test nb_edges(mot) == 8
+@test contains_edge(mot,edge1) == true
+@test contains_edge(mot,edge2) == true
+@test contains_edge(mot,edge3) == true
+@test contains_edge(mot,edge4) == true
+@test contains_edge(mot,edge6) == true
+@test contains_edge(mot,edge7) == true
+@test contains_edge(mot,edge11) == true
+@test contains_edge(mot,edge13) == true
 
 println("Testing complete!")

@@ -164,3 +164,46 @@ function create_graph_from_stsp_file(filepath::String, verbose::Bool)
   # Création du graphe
   return Graph(graphname, nodes, edges)
 end
+
+"""reset graph values to default to avoid side effects"""
+function reset_graph!(graph :: AbstractGraph)
+  g_nodes = nodes(graph)
+  for i = 1 : length(g_nodes)
+    reset_node!(g_nodes[i])
+  end
+end
+
+"""give array value corresponding to the degree of each vertices"""
+function degrees(graph :: AbstractGraph)
+  g_nodes = nodes(graph)
+  g_edges = edges(graph)
+  degrees_ar =  zeros(length(g_nodes))
+  for i = 1 : length(g_nodes)
+    for j = 1 : length(g_edges)
+      if g_nodes[i] in nodes(g_edges[j])
+        degrees_ar[i] = degrees_ar[i] + 1
+      end
+    end
+  end
+  return degrees_ar
+end
+
+"""give degree for given vertex in graph"""
+function degree(graph :: AbstractGraph, vertex :: AbstractNode)
+  g_edges = edges(graph)
+  degree_val = 0
+  for j = 1 : length(g_edges)
+    if vertex in nodes(g_edges[j])
+      degree_val = degree_val + 1
+    end
+  end
+  return degree_val
+end
+
+"""Set the node numbers in a graph"""
+function set_node_numbers!(graph :: AbstractGraph)
+  g_nodes = nodes(graph)
+  for i = 1 : nb_nodes(graph)
+    set_node_num!(g_nodes[i],i)
+  end
+end

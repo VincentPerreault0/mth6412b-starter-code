@@ -1,4 +1,4 @@
-#include("../phase2/graph.jl")
+include("../phase2/graph.jl")
 include("priority_queue.jl")
 
 """" fonction qui prend un graphe et une source et renvoie
@@ -32,21 +32,20 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
         push!(dict_nodes[node2],node1)
         push!(dict_edges[node1],edge)
         push!(dict_edges[node2],edge)
-    end 
-
+    end
     #Boucle
     while nb_items(q)>0
         #on sort un noeud de minweight minimal
         u=popfirst!(q, Node)
         #on ajoute l arrete correspondante aux arretes du minimum spanning tree
-        if (u==s)==false #si u ==s on est a la premiere iteration et p est vide
+        if (u==s)==false #si u!==s on est a la premiere iteration et p est vide
             tmp=popfirst!(p,u)
             push!(new_edges,tmp)
         end
-        #on actualise les valeurs des noeuds voisins 
+        #on actualise les valeurs des noeuds voisins
         for v in dict_nodes[u]
             if contains_item(q,v)==true
-                for edge in dict_edges[v]
+                for edge in dict_edges[v]                  
                     if u in nodes(edge) && v in nodes(edge) && weight(edge)<minweight(v)
                         v.parent=u
                         v.minweight=weight(edge)
