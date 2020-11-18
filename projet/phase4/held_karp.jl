@@ -79,36 +79,45 @@ end
 
 """W function as described in TSP doc"""
 function w_one_trees(graph :: AbstractGraph, pi :: Array)
+    # On initialise toutes les variables nécessaires
     set_node_numbers!(graph)
     nb_iterations = nb_nodes(graph)
     g_nodes = nodes(graph)
     min_wk = nothing
     min_vk = nothing
     min_kth_otree = graph
+    # On détermine tous 1-tree possibles ( 1 par node )
     for k = 1 : nb_iterations
+        # On limite les effets de bords en remettant toutes les
+        # valeurs du graphe à 0
         reset_graph!(graph)
+        # On ajoute les valeurs de pi au poids des edges
         add_pi_graph!(graph,pi)
+        # On détermine le 1-tree minimal par rapport au point k
         kth_otree = min_one_tree(graph,g_nodes[k])
+        # On calcule c_k
         ck = total_weight(kth_otree)
+        # On soustrait les valeurs de pi
         sub_pi_graph!(graph,pi)
+        # On calcule le produit pi.vk
         sum_pi_vk = 0
         otree_degrees = degrees(kth_otree)
         vk = otree_degrees .- 2
-        #for i = 1 : nb_iterations
         sum_pi_vk = dot(pi,vk)
         println("sum_pi_vk : "*string(sum_pi_vk))
         println("ck : "*string(ck))
-        #end
+        # On obtient la valeur de w pour la k-ieme iteration
         wk = ck + sum_pi_vk
+        # On détermine la valeur minimale de wk
+        # ( et le vk et kieme 1-tree associé )
         if min_wk === nothing || wk <= min_wk
             min_wk = wk
             min_vk = vk
-            # A verifier
-
             min_kth_otree = kth_otree
-            
         end
     end
+    # On renvoie le min de wk
+    # ( et le vk et kieme 1-tree associé )
     return min_wk, min_vk, min_kth_otree
 end
 
@@ -126,6 +135,7 @@ end
 """Getting the maximum value of w"""
 function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64)
     size_g = nb_nodes(graph)
+    # valeur de pi créée au hasard
     pi_m = ones(size_g)
     pi_m[1] = 10
     pi_m[2] = 3
@@ -133,22 +143,28 @@ function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64)
     pi_m[5] = 4
     println("pim : ")
     println(pi_m)
+    # calcul de w0, vk_0 et k 1-tree 0
     w_val, vk_pi, k_otree = w_one_trees(graph,pi_m)
     println("w_val"*string(w_val))
     println("vk_pi : ")
     println(vk_pi)
     show(k_otree)
+    # On calcule pi_m + 1
     pi_m = pi_m + tm * vk_pi
+    # On détermine w1, vk_1 et k 1-tree 1
     w_val_1, vk_pi_1, k_1_otree = w_one_trees(graph,pi_m)
     println("vk_pi_1 : ")
     println(vk_pi_1)
+    # On détermine max_tm à partir de la doc
     max_tm = 2*(w_val_1-w_val)/(norm(vk_pi)^2)
     println("max_tm : "*string(max_tm))
+    # On initialise les valeurs par défaut
     iter = 0
     min_tour = graph
     if is_tour(k_1_otree)
         min_tour = k_1_otree
     end
+    # On calcule les valeurs de w suivantes, ainsi que les vk et 1-tree associés
     while (tm < max_tm) && (iter < max_iter) #&& (w_val_1 > w_val)
         w_val = w_val_1
         vk_pi = vk_pi_1
