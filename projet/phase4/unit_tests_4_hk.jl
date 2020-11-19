@@ -165,7 +165,15 @@ sub_pi_graph!(graphw,old_weights)
 @test weight(edge3w) == 0
 @test weight(edge7w) == 1
 
-graph_res = max_w(graphw, 1.2, 1000)
+# valeur de pi créée au hasard
+pi_m = ones(size_g)
+pi_m .* 0.5
+pi_m[1] = 0.3
+pi_m[3] = 0.7
+println("pim : ")
+println(pi_m)
+
+graph_res = max_w(graphw, 1.2, 1000, pi_m)
 
 #show(graph_res)
 #println(degrees(graph_res))

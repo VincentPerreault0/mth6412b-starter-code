@@ -92,23 +92,31 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array)
         # On limite les effets de bords en remettant toutes les
         # valeurs du graphe à 0
         reset_graph!(graph)
+
         # On ajoute les valeurs de pi au poids des edges
         old_weights = add_pi_graph!(graph,pi)
+
         # On détermine le 1-tree minimal par rapport au point k
         kth_otree = min_one_tree(graph,g_nodes[k])
+
         # On soustrait les valeurs de pi
         sub_pi_graph!(graph,old_weights)
+
         # On calcule c_k
         ck = total_weight(kth_otree)
+
         # On calcule le produit pi.vk       
         sum_pi_vk = 0
         otree_degrees = degrees(kth_otree)
         vk = otree_degrees .- 2
         sum_pi_vk = dot(pi,vk)
+
         println("sum_pi_vk : "*string(sum_pi_vk))
         println("ck : "*string(ck))
+
         # On obtient la valeur de w pour la k-ieme iteration
         wk = ck + sum_pi_vk
+
         # On détermine la valeur minimale de wk
         # ( et le vk et kieme 1-tree associé )
         if min_wk === nothing || wk <= min_wk
@@ -117,6 +125,7 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array)
             min_kth_otree = kth_otree
         end
     end
+    
     # On renvoie le min de wk
     # ( et le vk et kieme 1-tree associé )
     return min_wk, min_vk, min_kth_otree
@@ -134,54 +143,55 @@ function is_tour(graph :: AbstractGraph)
 end
 
 """Getting the maximum value of w"""
-function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64)
+function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m :: Array)
     size_g = nb_nodes(graph)
-    # valeur de pi créée au hasard
-    pi_m = ones(size_g)
-    pi_m .* 0.5
-    pi_m[1] = 0.3
-    pi_m[3] = 0.7
-    println("pim : ")
-    println(pi_m)
     # calcul de w0, vk_0 et k 1-tree 0
     w_val, vk_pi, k_otree = w_one_trees(graph,pi_m)
-    println("w_val"*string(w_val))
-    println("vk_pi : ")
-    println(vk_pi)
-    show(k_otree)
     # On calcule pi_m + 1
     pi_m = pi_m + tm * vk_pi
     # On détermine w1, vk_1 et k 1-tree 1
     w_val_1, vk_pi_1, k_1_otree = w_one_trees(graph,pi_m)
-    println("vk_pi_1 : ")
-    println(vk_pi_1)
     # On détermine max_tm à partir de la doc
     max_tm = 2*(w_val_1-w_val)/(norm(vk_pi)^2)
-    println("max_tm : "*string(max_tm))
     # On initialise les valeurs par défaut
     iter = 0
     min_tour = graph
     if is_tour(k_1_otree)
         min_tour = k_1_otree
     end
+
+    ###########################################
+    # Prints pour voir l'évolution du code 
+    println("w_val"*string(w_val))
+    println("vk_pi : ")
+    println(vk_pi)
+    show(k_otree)
+    println("vk_pi_1 : ")
+    println(vk_pi_1)
+    println("max_tm : "*string(max_tm))
+    ###########################################
+
     # On calcule les valeurs de w suivantes, ainsi que les vk et 1-tree associés
     while (tm < max_tm) && (iter < max_iter) #&& (w_val_1 > w_val)
         w_val = w_val_1
         vk_pi = vk_pi_1
+
+        ########################################
+        # evolution des variables dans la boucle
         println("test : ")
         println(pi_m)
         println(vk_pi)
+        println("iter : "*string(iter))
+        ########################################
+
         pi_m = pi_m + tm .* vk_pi
         w_val_1, vk_pi_1, k_1_otree = w_one_trees(graph,pi_m)
-        iter = iter + 1
         println(degrees(k_1_otree))
         if is_tour(k_1_otree)
             min_tour = k_1_otree
-            println(" ")
-            println("VICTOIRE")
-            println(" ")
         end
-        println("iter : "*string(iter))
+        iter = iter + 1
+        
     end
     return min_tour
 end
