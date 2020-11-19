@@ -86,20 +86,21 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array)
     min_wk = nothing
     min_vk = nothing
     min_kth_otree = graph
+    old_weights = []
     # On détermine tous 1-tree possibles ( 1 par node )
     for k = 1 : nb_iterations
         # On limite les effets de bords en remettant toutes les
         # valeurs du graphe à 0
         reset_graph!(graph)
         # On ajoute les valeurs de pi au poids des edges
-        add_pi_graph!(graph,pi)
+        old_weights = add_pi_graph!(graph,pi)
         # On détermine le 1-tree minimal par rapport au point k
         kth_otree = min_one_tree(graph,g_nodes[k])
+        # On soustrait les valeurs de pi
+        sub_pi_graph!(graph,old_weights)
         # On calcule c_k
         ck = total_weight(kth_otree)
-        # On soustrait les valeurs de pi
-        sub_pi_graph!(graph,pi)
-        # On calcule le produit pi.vk
+        # On calcule le produit pi.vk       
         sum_pi_vk = 0
         otree_degrees = degrees(kth_otree)
         vk = otree_degrees .- 2
@@ -137,10 +138,9 @@ function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64)
     size_g = nb_nodes(graph)
     # valeur de pi créée au hasard
     pi_m = ones(size_g)
-    pi_m[1] = 10
-    pi_m[2] = 3
-    pi_m[3] = 7
-    pi_m[5] = 4
+    pi_m .* 0.5
+    pi_m[1] = 0.3
+    pi_m[3] = 0.7
     println("pim : ")
     println(pi_m)
     # calcul de w0, vk_0 et k 1-tree 0
@@ -189,25 +189,23 @@ end
 """Add pi weight to graph edges"""
 function add_pi_graph!(graph::AbstractGraph, pi::Array)
     g_edges = edges(graph)
+    old_weights = []
     for i = 1 : length(g_edges)
         edge_n = get_edge_node_nums(g_edges[i])
         if edge_n[1] == 0
             println("Don't forget to set node numbers")
         end
+        push!(old_weights,weight(g_edges[i]))
         new_weight = weight(g_edges[i]) + pi[edge_n[1]] + pi[edge_n[2]]
         set_weight!(g_edges[i], new_weight)
     end
+    return old_weights
 end
 
 """Substract pi weight to graph edges"""
-function sub_pi_graph!(graph::AbstractGraph, pi::Array)
+function sub_pi_graph!(graph::AbstractGraph, old_weights::Array)
     g_edges = edges(graph)
     for i = 1 : length(g_edges)
-        edge_n = get_edge_node_nums(g_edges[i])
-        if edge_n[1] == 0
-            println("Don't forget to set node numbers")
-        end
-        new_weight = weight(g_edges[i]) - pi[edge_n[1]] - pi[edge_n[2]]
-        set_weight!(g_edges[i], new_weight)
+        set_weight!(g_edges[i], old_weights[i])
     end
 end

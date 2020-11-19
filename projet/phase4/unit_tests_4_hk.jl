@@ -118,7 +118,7 @@ pi = [1,2,3,1,2,3]
 w_val, vk, k_otree = w_one_trees(graphw, pi)
 
 show(k_otree)
-@test w_val == 15
+@test w_val == 1
 
 node1t=Node("1", 1)
 node2t=Node("2", 1)
@@ -155,17 +155,17 @@ pi2 = [1,1,1,1,2,1]
 
 set_node_numbers!(graphw)
 
-add_pi_graph!(graphw,pi2)
+old_weights = add_pi_graph!(graphw,pi2)
 
 @test weight(edge4w) == 3
 @test weight(edge7w) == 4
 
-sub_pi_graph!(graphw,pi2)
+sub_pi_graph!(graphw,old_weights)
 
 @test weight(edge3w) == 0
 @test weight(edge7w) == 1
 
-#graph_res = max_w(graphw, 2.0, 1000)
+graph_res = max_w(graphw, 1.2, 1000)
 
 #show(graph_res)
 #println(degrees(graph_res))
