@@ -8,18 +8,15 @@ node2=Node("2", 10)
 node3=Node("3", 22)
 node4=Node("4", 11)
 node5=Node("5", 11)
-edge1=Edge(10.0, (node1,node2))
-edge2=Edge(21.0, (node2,node3))
-edge3=Edge(10.0, (node2,node4))
-edge4=Edge(12.0, (node3,node5))
-dict_edges=Dict{Node, Vector{Edge}}()
-dict_edges[node2]=Vector{Edge}()
-dict_edges[node2]=[edge2,edge3]
-dict_edges[node3]=[edge4, edge2]
-dict_edges[node4]=[edge3]
-dict_edges[node5]=[edge4]
+edge1g=Edge(10.0, (node1,node2))
+edge2g=Edge(21.0, (node2,node3))
+edge3g=Edge(10.0, (node2,node4))
+edge4g=Edge(12.0, (node3,node5))
+edge5g=Edge(0.0, (node1,node1))
+edge6g=Edge(24.0, (node1,node4))
 
-graph=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1,edge2,edge3,edge4])
+graph=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1g,edge2g,edge3g,edge4g])
+graph2=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1g,edge2g,edge3g,edge4g,edge5g,edge6g])
 
 # Exemple vu en cours
 nodeA = Node("a", nothing)
@@ -58,7 +55,14 @@ for i = 1 : length(sg_edges)
 end
 @test !(node3 in(nodes(sgraph)))
 
+@test min_weight_edges(graph2,node1)==[edge1g,edge6g] || min_weight_edges(graph2,node1)==[edge6g,edge1g]
 @test min_weight_edges(g,nodeB)==[edge1,edge2] || min_weight_edges(g,nodeB)==[edge2,edge1]
+
+set_node_numbers!(graph)
+graph.nodes = [node3,node2,node1,node4,node5]
+order_nodes!(graph)
+
+@test graph.nodes == [node1,node2,node3,node4,node5]
 
 mot = min_one_tree_two_nodes(g,nodeB,nodeA)
 
@@ -75,7 +79,7 @@ mot = min_one_tree_two_nodes(g,nodeB,nodeA)
 @test contains_edge(mot,edge13) == true
 
 reset_graph!(g)
-mot = min_one_tree(g,nodeB)
+mot = min_one_tree(g,nodeB,true,false)
 
 @test nb_nodes(mot) == nb_nodes(g)
 @test nb_edges(mot) == 9
@@ -113,12 +117,35 @@ edge8w = Edge(1,(node4w,node6w))
 edge9w = Edge(1,(node5w,node6w))
 
 graphw = Graph("Graph w", [node1w,node2w,node3w,node4w,node5w,node6w], [edge1w,edge2w,edge3w,edge4w,edge5w,edge6w,edge7w,edge8w,edge9w])
-pi = [1,2,3,1,2,3]
+pi = [0,0,0,0,0,0]
 
-w_val, vk, k_otree = w_one_trees(graphw, pi)
+w_val, vk, k_otree = w_one_trees(graphw, pi, false, false)
 
-show(k_otree)
-@test w_val == 1
+@test w_val == 3
+
+node1x=Node("1", 1)
+node2x=Node("2", 1)
+node3x=Node("3", 1)
+node4x=Node("4", 1)
+node5x=Node("5", 1)
+node6x=Node("6", 1)
+
+edge1x = Edge(2,(node1x,node2x))
+edge2x = Edge(5,(node1x,node3x))
+edge3x = Edge(3,(node2x,node4x))
+edge4x = Edge(3,(node3x,node4x))
+edge5x = Edge(7,(node3x,node5x))
+edge6x = Edge(1,(node4x,node5x))
+edge7x = Edge(4,(node4x,node6x))
+edge8x = Edge(2,(node5x,node6x))
+
+graphx = Graph("Graph x", [node1x,node2x,node3x,node4x,node5x,node6x], [edge1x,edge2x,edge3x,edge4x,edge5x,edge6x,edge7x,edge8x])
+pi_x = [2,1,3,1,2,3]
+
+w_valx, vkx, k_otreex = w_one_trees(graphx, pi_x, true, false)
+
+@test w_valx == 12
+@test vkx == [-1,0,-1,2,0,0]
 
 node1t=Node("1", 1)
 node2t=Node("2", 1)
@@ -137,10 +164,7 @@ edge9t = Edge(1,(node5t,node6t))
 grapht = Graph("Graph t", [node1t,node2t,node3t,node4t,node5t,node6t], [edge1t,edge2t,edge5t,edge6t,edge8t,edge9t])
 
 @test is_tour(grapht)
-
-#graphbayg = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/bayg29.tsp", true)
-
-#show(graphbayg)
+@test !is_tour(graphx)
 
 set_node_numbers!(grapht)
 edge_nums = get_edge_node_nums(edge5t)
@@ -165,18 +189,27 @@ sub_pi_graph!(graphw,old_weights)
 @test weight(edge3w) == 0
 @test weight(edge7w) == 1
 
+graphbayg = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/bayg29.tsp", false)
+graphbrazil = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/brazil58.tsp", false)
+graphtest = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/gr17.tsp", false)
+
+
 # valeur de pi créée au hasard
-pi_m = ones(size_g)
+pi_m = ones(nb_nodes(graphw))
 pi_m .* 0.5
 pi_m[1] = 0.3
 pi_m[3] = 0.7
-println("pim : ")
-println(pi_m)
 
-graph_res = max_w(graphw, 1.2, 1000, pi_m)
+pi_mg = zeros(nb_nodes(graphtest))
+for i = 1 : length(pi_mg)
+    pi_mg[i] = rand(0:100)
+end
 
-#show(graph_res)
-#println(degrees(graph_res))
+graph_res2 = max_w(graphtest, 0.1, 10000, pi_mg, false, false)
+
+println("resultat")
+#show(graph_res2)
+println(degrees(graph_res2))
 
 
 node1a=Node("1", 1)

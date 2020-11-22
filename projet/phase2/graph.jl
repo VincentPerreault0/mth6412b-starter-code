@@ -61,6 +61,16 @@ function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
   end
 end
 
+"""Ajoute un noeud au graphe à la position donnée."""
+function insert_node!(graph:: AbstractGraph{T}, index::Int64, node::AbstractNode{T}) where T
+  if contains_node(graph,node)
+    return(graph)
+  else
+    insert!(graph.nodes, index, node)
+    return(graph)
+  end
+end
+
 """Vérifie si le graphe contient un certain lien."""
 contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
 
@@ -206,4 +216,16 @@ function set_node_numbers!(graph :: AbstractGraph)
   for i = 1 : nb_nodes(graph)
     set_node_num!(g_nodes[i],i)
   end
+end
+
+"""Order the nodes in a graph"""
+function order_nodes!(graph :: AbstractGraph)
+  len_nodes = nb_nodes(graph)
+  g_nodes = nodes(graph)
+  ordered_nodes = Vector{typeof(g_nodes[1])}(undef,len_nodes)
+  for i = 1 : len_nodes
+    node_num = get_node_num(g_nodes[i])
+    ordered_nodes[node_num] = g_nodes[i]
+  end
+  graph.nodes = ordered_nodes
 end
