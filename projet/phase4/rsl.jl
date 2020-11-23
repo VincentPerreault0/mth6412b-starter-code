@@ -64,7 +64,3 @@ function rsl_graph_weight(graph :: AbstractGraph, ar_nodes :: Array)
     end
     return rsl_weight
 end
-
-
-
-

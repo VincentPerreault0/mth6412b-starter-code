@@ -206,55 +206,17 @@ sub_pi_graph!(graphw,old_weights)
 
 println("add_pi_graph et sub_pi_graph ok")
 
-graphbayg = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/bayg29.tsp", false)
-graphbrazil = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/brazil58.tsp", false)
 graphtest = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/gr17.tsp", false)
 
-
-# valeur de pi créée au hasard
-pi_m = ones(nb_nodes(graphw))
-pi_m .* 0.5
-pi_m[1] = 0.3
-pi_m[3] = 0.7
-
 pi_mg = zeros(nb_nodes(graphtest))
-for i = 1 : length(pi_mg)
-    pi_mg[i] = rand(0:100)
-end
+#for i = 1 : length(pi_mg)
+#    pi_mg[i] = rand(0:100)
+#end
 
-graph_res2,max_w = max_w(graphtest, 0.1, 10000, pi_mg, false, false)
+#graph_res2,max_w_val = max_w(graphtest, 0.1, 10000, pi_mg, false, false)
 
-println("resultat")
-#show(graph_res2)
-println(degrees(graph_res2))
-
-
-node1a=Node("1", 1)
-node2a=Node("2", 1)
-node3a=Node("3", 1)
-node4a=Node("4", 1)
-node5a=Node("5", 1)
-node6a=Node("6", 1)
-
-edge1a = Edge(0,(node1a,node2a))
-edge2a = Edge(1,(node1a,node3a))
-edge3a = Edge(0,(node1a,node6a))
-edge4a = Edge(0,(node2a,node3a))
-edge5a = Edge(1,(node2a,node5a))
-edge6a = Edge(0,(node3a,node4a))
-edge7a = Edge(0,(node4a,node5a))
-edge8a = Edge(1,(node4a,node6a))
-edge9a = Edge(0,(node5a,node6a))
-
-grapha = Graph("Graph a", [node1a,node2a,node3a,node4a,node5a,node6a], [edge1a,edge2a,edge3a,edge4a,edge5a,edge6a,edge7a,edge8a,edge9a])
-
-#mot2 = min_one_tree(grapha,node2a)
-
-#show(mot2)
-
-#graph_res2 = max_w(graphbayg, 5.0, 50)
+#println("resultat")
 #show(graph_res2)
 #println(degrees(graph_res2))
-
 
 println("Testing complete!")

@@ -166,6 +166,7 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array, krusk :: Bool, randnod
     min_vk = nothing
     min_kth_otree = graph
     old_weights = []
+    
     # On détermine tous 1-tree possibles ( 1 par node )
     for k = 1 : nb_iterations
         # On limite les effets de bords en remettant toutes les
@@ -198,12 +199,6 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array, krusk :: Bool, randnod
         if min_wk === nothing || wk <= min_wk
             min_wk = wk
             min_vk = vk
-            #if is_tour(kth_otree)
-            #    min_kth_otree = kth_otree
-            #end
-            #min_kth_otree = kth_otree
-        end
-        if is_tour(kth_otree)
             min_kth_otree = kth_otree
         end
     end
@@ -262,6 +257,7 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
     w_ref = 0
     vk_ref = []
     first_period = true
+    max_wk = 0
 
     while !null_step_size && !null_period && !null_vk && iter < max_iter     
         
@@ -296,6 +292,9 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
         end
         w_ref = wk
         vk_ref = vk
+        if wk > max_wk
+            max_wk = wk
+        end
 
         # End condition update
         null_step_size = (tm < 0.001)
@@ -304,5 +303,6 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
 
         #println(wk)
     end
-    return min_tour
+    return min_tour, max_wk
 end
+    
