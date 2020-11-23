@@ -18,7 +18,6 @@ edge6g=Edge(24.0, (node1,node4))
 graph=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1g,edge2g,edge3g,edge4g])
 graph2=Graph("graph Test", [node1, node2,node3,node4,node5], [edge1g,edge2g,edge3g,edge4g,edge5g,edge6g])
 
-# Exemple vu en cours
 nodeA = Node("a", nothing)
 nodeB = Node("b", nothing)
 nodeC = Node("c", nothing)
@@ -55,14 +54,20 @@ for i = 1 : length(sg_edges)
 end
 @test !(node3 in(nodes(sgraph)))
 
+println("subgraph ok")
+
 @test min_weight_edges(graph2,node1)==[edge1g,edge6g] || min_weight_edges(graph2,node1)==[edge6g,edge1g]
 @test min_weight_edges(g,nodeB)==[edge1,edge2] || min_weight_edges(g,nodeB)==[edge2,edge1]
+
+println("min_weight_edges ok")
 
 set_node_numbers!(graph)
 graph.nodes = [node3,node2,node1,node4,node5]
 order_nodes!(graph)
 
 @test graph.nodes == [node1,node2,node3,node4,node5]
+
+println("order_nodes ok")
 
 mot = min_one_tree_two_nodes(g,nodeB,nodeA)
 
@@ -93,11 +98,15 @@ mot = min_one_tree(g,nodeB,true,false)
 @test contains_edge(mot,edge11) == true
 @test contains_edge(mot,edge13) == true
 
+println("min_one_tree ok")
+
 degree_val = degree(g,nodeB)
 degrees_ar = degrees(g)
 
 @test degree_val == 3
 @test degrees_ar[2] == 3
+
+println("degree et degrees ok")
 
 node1w=Node("1", 1)
 node2w=Node("2", 1)
@@ -147,6 +156,8 @@ w_valx, vkx, k_otreex = w_one_trees(graphx, pi_x, true, false)
 @test w_valx == 12
 @test vkx == [-1,0,-1,2,0,0]
 
+println("w_one_trees ok")
+
 node1t=Node("1", 1)
 node2t=Node("2", 1)
 node3t=Node("3", 1)
@@ -166,6 +177,8 @@ grapht = Graph("Graph t", [node1t,node2t,node3t,node4t,node5t,node6t], [edge1t,e
 @test is_tour(grapht)
 @test !is_tour(graphx)
 
+println("is_tour ok")
+
 set_node_numbers!(grapht)
 edge_nums = get_edge_node_nums(edge5t)
 edge_nums2 = get_edge_node_nums(edge8t)
@@ -179,6 +192,8 @@ pi2 = [1,1,1,1,2,1]
 
 set_node_numbers!(graphw)
 
+println("set_node_numbers ok")
+
 old_weights = add_pi_graph!(graphw,pi2)
 
 @test weight(edge4w) == 3
@@ -188,6 +203,8 @@ sub_pi_graph!(graphw,old_weights)
 
 @test weight(edge3w) == 0
 @test weight(edge7w) == 1
+
+println("add_pi_graph et sub_pi_graph ok")
 
 graphbayg = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/bayg29.tsp", false)
 graphbrazil = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/brazil58.tsp", false)
@@ -205,7 +222,7 @@ for i = 1 : length(pi_mg)
     pi_mg[i] = rand(0:100)
 end
 
-graph_res2 = max_w(graphtest, 0.1, 10000, pi_mg, false, false)
+graph_res2,max_w = max_w(graphtest, 0.1, 10000, pi_mg, false, false)
 
 println("resultat")
 #show(graph_res2)

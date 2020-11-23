@@ -43,7 +43,27 @@ function rsl(graph::AbstractGraph, s::AbstractNode)
     return(q)
 end
 
-    
+"""get weight of rsl"""
+function rsl_graph_weight(graph :: AbstractGraph, ar_nodes :: Array)
+    g_edges = edges(graph)
+    len_n = length(ar_nodes)
+    len_e = length(g_edges)
+    rsl_weight = 0
+
+    for i = 1:(len_n-1)
+        for j = 1 : len_e
+            if (ar_nodes[i] in(nodes(g_edges[j])) && ar_nodes[i+1] in(nodes(g_edges[j])))
+                rsl_weight = rsl_weight + weight(g_edges[j])
+            end
+        end
+    end
+    for j = 1 : len_e
+        if (ar_nodes[1] in(nodes(g_edges[j])) && ar_nodes[len_n] in(nodes(g_edges[j])))
+            rsl_weight = rsl_weight + weight(g_edges[j])
+        end
+    end
+    return rsl_weight
+end
 
 
 

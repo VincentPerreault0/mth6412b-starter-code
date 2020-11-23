@@ -212,6 +212,9 @@ end
 
 """Set the node numbers in a graph"""
 function set_node_numbers!(graph :: AbstractGraph)
+  # L'idée est d'attribuer un numéro à chaque node plutôt que de 
+  # se référer au nom pour rendre l'algorithme plus générique 
+  # au cas où 2 nodes aient des noms identiques
   g_nodes = nodes(graph)
   for i = 1 : nb_nodes(graph)
     set_node_num!(g_nodes[i],i)
@@ -220,6 +223,9 @@ end
 
 """Order the nodes in a graph"""
 function order_nodes!(graph :: AbstractGraph)
+  # Cette fonction sert à réorganiser les sommets
+  # pour que le vecteur pi soit bien additionné aux bons
+  # sommets
   len_nodes = nb_nodes(graph)
   g_nodes = nodes(graph)
   ordered_nodes = Vector{typeof(g_nodes[1])}(undef,len_nodes)
