@@ -225,10 +225,6 @@ function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m ::
         end
         if wk > max_wk
             max_wk = wk
-            #println(wk)
-            #println(tm)
-            #println(pi_m)
-            #println(degrees(k_otree))
             min_tour = k_otree
         end
         #if wk < w_ref
@@ -237,7 +233,6 @@ function max_w(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m ::
         #    tm = min(20.0,tm*2)
         #end
         w_ref = wk
-        #println(wk)
     end
     return min_tour, max_wk
 end
@@ -277,23 +272,21 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
         # End loop update
         if wk > w_ref && period_iter == period 
             period = period*2
-            println("coucou3")
             first_period = false
         elseif period_iter == period
             period_iter = 0
             period = period ÷ 2
             tm = tm/2
-            println("coucou1")
             first_period = false
         end
         if wk > w_ref && period == size_g ÷ 2 && first_period
             tm = tm*2
-            println("coucou2")
         end
         w_ref = wk
         vk_ref = vk
         if wk > max_wk
             max_wk = wk
+            min_tour = k_otree
         end
 
         # End condition update
@@ -301,8 +294,68 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
         null_period = (period < 0.001)
         null_vk = (vk == zeros(size_g))
 
-        #println(wk)
     end
     return min_tour, max_wk
+end
+
+"""Correct 1-tree into tour"""
+function correct_one_tree(graph :: AbstractGraph, one_tree :: AbstractGraph)
+    
+    o_nodes = nodes(one_tree)
+    o_edges = edges(one_tree)
+
+    ot_deg_one = []
+    first_occ = true
+    index = 1
+    new_edge = Edge(0.0,(o_nodes[1],o_nodes[2]))
+
+    println(degrees(one_tree))
+    
+    while first_occ == true
+        if ((degree(one_tree, nodes(o_edges[index])[1]) == 3 && degree(one_tree, nodes(o_edges[index])[2]) != 1) || (degree(one_tree, nodes(o_edges[index])[2]) == 3  && degree(one_tree, nodes(o_edges[index])[1]) != 1))
+            deleteat!(o_edges, findfirst(x->x==o_edges[index], o_edges))
+            first_occ = false
+        end
+        index = index + 1
+    end
+
+    for i = 1:length(o_nodes)
+        println(degree(one_tree, o_nodes[i]))
+        if (degree(one_tree, o_nodes[i])==1)
+            println("ok")
+            push!(ot_deg_one, i)
+        end
+    end
+
+    println(ot_deg_one)
+    #if length(ot_deg_one) % 2 != 0
+    if length(ot_deg_one) != 2
+        println("Problème insoluble")
+        return
+    end
+
+    show(o_nodes[ot_deg_one[1]])
+    show(o_nodes[ot_deg_one[2]])
+    new_edge = find_edge(graph, o_nodes[ot_deg_one[1]], o_nodes[ot_deg_one[2]])
+    println(new_edge)
+    show(new_edge)
+    add_edge!(one_tree, new_edge)
+
+    #for i = 1:(length(ot_deg_one) ÷ 2)
+    #    new_edge = find_edge(graph, ot_deg_one[2*i-1], ot_deg_one[2*i])
+    #    add_edge!(one_tree, new_edge)
+    #end
+
+    return one_tree
+end
+
+"""Function to get edge with 2 nodes in graph"""
+function find_edge(graph :: AbstractGraph, node1 :: Node{T}, node2 :: Node{T}) where T
+    g_edges = edges(graph)
+    for i = 1:length(g_edges)
+        if (node1 in(nodes(g_edges[i])) && node2 in(nodes(g_edges[i])))
+            return g_edges[i]
+        end
+    end
 end
     

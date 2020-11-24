@@ -206,6 +206,39 @@ sub_pi_graph!(graphw,old_weights)
 
 println("add_pi_graph et sub_pi_graph ok")
 
+new_edge = find_edge(grapht, node2t, node5t)
+
+@test new_edge == edge5t
+
+println("find_edge ok")
+
+node1k=Node("1", 1)
+node2k=Node("2", 1)
+node3k=Node("3", 1)
+node4k=Node("4", 1)
+node5k=Node("5", 1)
+
+edge1k = Edge(2,(node1k,node2k))
+edge2k = Edge(5,(node1k,node3k))
+edge3k = Edge(3,(node1k,node4k))
+edge4k = Edge(3,(node1k,node5k))
+edge5k = Edge(7,(node2k,node3k))
+edge6k = Edge(1,(node2k,node4k))
+edge7k = Edge(5,(node2k,node5k))
+edge8k = Edge(8,(node3k,node4k))
+edge9k = Edge(2,(node3k,node5k))
+edge10k = Edge(1,(node4k,node5k))
+
+graphk = Graph("Graph k", [node1k,node2k,node3k,node4k,node5k], [edge1k,edge2k,edge3k,edge4k,edge5k,edge6k,edge7k,edge8k,edge9k,edge10k])
+graphko = Graph("Graph ko", [node1k,node2k,node3k,node4k,node5k], [edge1k,edge5k,edge7k,edge8k,edge10k])
+
+new_edge2 = find_edge(graphk, node1k, node3k)
+@test new_edge2 == edge2k
+
+tour_one_tree = correct_one_tree(graph, graphko)
+
+@test is_tour(tour_one_tree)
+
 graphtest = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/gr17.tsp", false)
 
 pi_mg = zeros(nb_nodes(graphtest))
