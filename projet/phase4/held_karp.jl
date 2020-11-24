@@ -298,53 +298,43 @@ function max_w_lk(graph :: AbstractGraph, tm :: Float64, max_iter :: Int64, pi_m
     return min_tour, max_wk
 end
 
-"""Correct 1-tree into tour"""
-function correct_one_tree(graph :: AbstractGraph, one_tree :: AbstractGraph)
+# Fonctions ci-dessous corrigées après l'heure limite de rendu :
+# Elle permet de récupérer un 1-tree qui est quasiment un tour et de le transformet en tour
+# Ne fonctionne que sur des 1-tree qui ont des degrés égaux à 1, 2 ou 3
+"""Correct 1-tree into tour, with a given amount of corrections"""
+function correct_one_tree(graph :: AbstractGraph, one_tree :: AbstractGraph, num_of_cor :: Int64)
     
     o_nodes = nodes(one_tree)
     o_edges = edges(one_tree)
 
-    ot_deg_one = []
-    first_occ = true
+    ot_deg_one = typeof(o_nodes[1])[]
     index = 1
-    new_edge = Edge(0.0,(o_nodes[1],o_nodes[2]))
 
-    println(degrees(one_tree))
+    num_cor_done = 0
     
-    while first_occ == true
-        if ((degree(one_tree, nodes(o_edges[index])[1]) == 3 && degree(one_tree, nodes(o_edges[index])[2]) != 1) || (degree(one_tree, nodes(o_edges[index])[2]) == 3  && degree(one_tree, nodes(o_edges[index])[1]) != 1))
+    while num_of_cor != num_cor_done
+        if ((degree(one_tree, nodes(o_edges[index])[1]) == 3 && degree(one_tree, nodes(o_edges[index])[2]) == 2) || (degree(one_tree, nodes(o_edges[index])[2]) == 3  && degree(one_tree, nodes(o_edges[index])[1]) == 2))
             deleteat!(o_edges, findfirst(x->x==o_edges[index], o_edges))
-            first_occ = false
+            num_cor_done = num_cor_done + 1
+            index = index - 1
         end
         index = index + 1
     end
 
     for i = 1:length(o_nodes)
-        println(degree(one_tree, o_nodes[i]))
         if (degree(one_tree, o_nodes[i])==1)
-            println("ok")
-            push!(ot_deg_one, i)
+            push!(ot_deg_one, o_nodes[i])
         end
     end
 
-    println(ot_deg_one)
-    #if length(ot_deg_one) % 2 != 0
-    if length(ot_deg_one) != 2
+    if length(ot_deg_one) % 2 != 0
         println("Problème insoluble")
-        return
     end
 
-    show(o_nodes[ot_deg_one[1]])
-    show(o_nodes[ot_deg_one[2]])
-    new_edge = find_edge(graph, o_nodes[ot_deg_one[1]], o_nodes[ot_deg_one[2]])
-    println(new_edge)
-    show(new_edge)
-    add_edge!(one_tree, new_edge)
-
-    #for i = 1:(length(ot_deg_one) ÷ 2)
-    #    new_edge = find_edge(graph, ot_deg_one[2*i-1], ot_deg_one[2*i])
-    #    add_edge!(one_tree, new_edge)
-    #end
+    for i = 1:(length(ot_deg_one) ÷ 2)
+        new_edge = find_edge(graph, ot_deg_one[2*i-1], ot_deg_one[2*i])
+        add_edge!(one_tree, new_edge)
+    end
 
     return one_tree
 end
@@ -358,4 +348,19 @@ function find_edge(graph :: AbstractGraph, node1 :: Node{T}, node2 :: Node{T}) w
         end
     end
 end
-    
+
+"""Function to determine if the 1-tree can be corrected and if so , corrects it"""
+function get_tour(graph :: AbstractGraph, one_tree :: AbstractGraph)
+
+    num_of_cor = 0
+    deg_otree = degrees(one_tree)
+    for i = 1:length(deg_otree)
+        if deg_otree[i] >= 4
+            return one_tree
+        elseif deg_otree[i] == 3
+            num_of_cor = num_of_cor + 1
+        end
+    end
+    graph_tour = correct_one_tree(graph, one_tree, num_of_cor)
+    return graph_tour
+end

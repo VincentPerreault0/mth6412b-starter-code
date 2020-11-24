@@ -217,6 +217,7 @@ node2k=Node("2", 1)
 node3k=Node("3", 1)
 node4k=Node("4", 1)
 node5k=Node("5", 1)
+node6k=Node("6", 1)
 
 edge1k = Edge(2,(node1k,node2k))
 edge2k = Edge(5,(node1k,node3k))
@@ -228,20 +229,28 @@ edge7k = Edge(5,(node2k,node5k))
 edge8k = Edge(8,(node3k,node4k))
 edge9k = Edge(2,(node3k,node5k))
 edge10k = Edge(1,(node4k,node5k))
+edge11k = Edge(8,(node1k,node6k))
+edge12k = Edge(5,(node2k,node6k))
+edge13k = Edge(2,(node3k,node6k))
+edge14k = Edge(4,(node4k,node6k))
+edge15k = Edge(9,(node5k,node6k))
 
-graphk = Graph("Graph k", [node1k,node2k,node3k,node4k,node5k], [edge1k,edge2k,edge3k,edge4k,edge5k,edge6k,edge7k,edge8k,edge9k,edge10k])
-graphko = Graph("Graph ko", [node1k,node2k,node3k,node4k,node5k], [edge1k,edge5k,edge7k,edge8k,edge10k])
+graphk = Graph("Graph k", [node1k,node2k,node3k,node4k,node5k,node6k], [edge1k,edge2k,edge3k,edge4k,edge5k,edge6k,edge7k,edge8k,edge9k,edge10k,edge11k,edge12k,edge13k,edge14k,edge15k])
+graphko = Graph("Graph ko", [node1k,node2k,node3k,node4k,node5k,node6k], [edge1k,edge5k,edge7k,edge8k,edge10k,edge13k])
+graphko2 = Graph("Graph ko2", [node1k,node2k,node3k,node4k,node5k,node6k], [edge1k,edge5k,edge7k,edge8k,edge10k,edge13k])
 
 new_edge2 = find_edge(graphk, node1k, node3k)
 @test new_edge2 == edge2k
 
-tour_one_tree = correct_one_tree(graph, graphko)
-
+tour_one_tree = correct_one_tree(graphk, graphko, 2)
 @test is_tour(tour_one_tree)
 
-graphtest = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/gr17.tsp", false)
+tour_one_tree2 = get_tour(graphk, graphko2)
+@test is_tour(tour_one_tree2)
 
-pi_mg = zeros(nb_nodes(graphtest))
+#graphtest = create_graph_from_stsp_file("D:/Poly_Montreal/Cours/MTH6412B/projet/phase4/mth6412b-starter-code/instances/stsp/gr17.tsp", false)
+
+#pi_mg = zeros(nb_nodes(graphtest))
 #for i = 1 : length(pi_mg)
 #    pi_mg[i] = rand(0:100)
 #end
