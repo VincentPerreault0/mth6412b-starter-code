@@ -1,0 +1,13 @@
+NAME : Graph k tour
+COMMENT : LENGHT = 14.0
+TYPE : TOUR
+DIMENSION : 6
+TOUR_SECTION
+2
+3
+4
+2
+5
+4
+-1
+EOF
