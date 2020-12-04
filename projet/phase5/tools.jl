@@ -38,7 +38,7 @@ function write_tour(filename::String, tour::Array{Int}, cost::Float64)
 	write(file,"DIMENSION : $length_tour\n")
 	write(file,"TOUR_SECTION\n")
 	for node in tour
-		write(file, "$(node + 1)\n")
+		write(file, "$(node )\n")
 	end
 	write(file, "-1\nEOF\n")
 	close(file)
