@@ -10,14 +10,34 @@ function tsp_cost(tour::AbstractGraph)
     return(cost)
 end 
 
+function shred_and_create_new_tsp(filepath::String)
+    #Step 1: shuffle picture
+    split_filepath = split(filepath, ".")
+    split_filename = split_filepath[length(split_filepath)-1]
+    filename = String(split_filename)
+    filepath_shredded=filename*"_shredded.png"
+    shuffle_picture(filepath, filepath_shredded)
+    #Step 2: calculate differences between columns 
+    picture = load(filepath_shredded)
+    nb_row, nb_col = size(picture)
+    w = zeros(nb_col, nb_col)
+    for j1 = 1 : nb_col
+        for j2 = j1 + 1 : nb_col
+            w[j1, j2] = compareColumn(picture[:, j1], picture[:, j2])
+        end
+    end
+
+end
+""" fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
+et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
+en instances"""
 function unshred(filename::String, hk::Bool, view::Bool)
     #Step 0: Create graph 
     graph = create_graph_from_stsp_file(filename, false)
-
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0, 50, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         println("tour complete")

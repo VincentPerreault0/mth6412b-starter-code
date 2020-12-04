@@ -9,7 +9,7 @@ filenames = ["projet/phase5/tsp/instances/abstract-light-painting.tsp",
             "projet/phase5/tsp/instances/the-enchanted-garden.tsp",
             "projet/phase5/tsp/instances/tokyo-skytree-aerial.tsp"]
 for filename in filenames
-    #println("on commence l'image ", filename)
+    println("on commence l'image ", filename)
     unshred(filename, true, true)
 end 
 shuffle_picture("projet/phase5/images/original/cubesmall.png","projet/phase5/images/original/cubesmall_shuffled.png")
