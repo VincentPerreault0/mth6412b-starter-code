@@ -1,4 +1,5 @@
 include("../phase4/held_karp.jl")
+include("../phase4/rsl.jl")
 include("tools.jl")
 
 function tsp_cost(tour::AbstractGraph)
@@ -31,6 +32,7 @@ function unshred(graph::AbstractGraph, hk::Bool, view::Bool)
     else #use RSL
         #Step1: Find minimal tour 
         tmp=rsl(graph, nodes(graph)[1])
+        println("tour complete")
         #Step2: Create an array with the order
         liste=Vector{Int64}()
         for node in tmp
@@ -53,7 +55,6 @@ end
 function unshred(filename::String, hk::Bool, view::Bool)
     #Step 1: Create graph 
     graph = create_graph_from_stsp_file(filename, false)
-    show(graph)
     #Step2: reconstruct
     return(unshred(graph,hk,view))
 end 
