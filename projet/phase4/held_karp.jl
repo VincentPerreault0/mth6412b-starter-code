@@ -351,7 +351,6 @@ end
 
 """Function to determine if the 1-tree can be corrected and if so , corrects it"""
 function get_tour(graph :: AbstractGraph, one_tree :: AbstractGraph)
-
     num_of_cor = 0
     deg_otree = degrees(one_tree)
     for i = 1:length(deg_otree)
