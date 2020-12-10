@@ -10,6 +10,7 @@ function tsp_cost(tour::AbstractGraph)
     return(cost)
 end 
 
+"""fonction a finir"""
 function shred_and_create_new_tsp(filepath::String)
     #Step 1: shuffle picture
     split_filepath = split(filepath, ".")
@@ -28,19 +29,21 @@ function shred_and_create_new_tsp(filepath::String)
     end
 
 end
+
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
 et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
 en instances"""
 function unshred(filename::String, hk::Bool, view::Bool)
     #Step 0: Create graph 
     graph = create_graph_from_stsp_file(filename, false)
+    
+    #Choose algorithm
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
         tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
-        println("tour complete")
         else
             println("Not a tour")
         end
@@ -52,21 +55,34 @@ function unshred(filename::String, hk::Bool, view::Bool)
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
     else #use RSL
+        #we need to prepare the graph
+        m=0
+        for edge in edges(graph)
+            if weight(edge)>m
+                m=weight(edge)
+                node_tmp=nodes(edge)[1]
+            end
+        end
+        #Make sure node minweights are big enough (otherwise Prim will give a false result) 
+        for node in nodes(graph)
+            node.minweight=m*5
+        end 
+        #modify edge weights for edges from 0
+        for edge in edges(graph)[1:length(nodes(graph))-1]
+            edge.weight=m+1
+        end 
         #Step1: Find minimal tour 
         tmp=rsl(graph, nodes(graph)[1])
-        println("tour complete")
         #Step 3: Find cost of tour
         cost=rsl_graph_weight(graph, tmp)
-        println(cost)
         #Step2: Create an array with the order
         liste=Vector{Int64}()
         while length(tmp)>0
             push!(liste, parse(Int64,name(popfirst!(tmp))))
         end
-    end 
-
+    end
     #Step 4: Write tour
-    tour_name=name(graph)*" tour"
+    tour_name=name(graph)*"_tour"
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
