@@ -46,7 +46,7 @@ function prim(graph :: AbstractGraph, s :: AbstractNode)
         for v in dict_nodes[u]
             if contains_item(q,v)==true
                 for edge in dict_edges[v]                  
-                    if u in nodes(edge) && v in nodes(edge) && weight(edge)<minweight(v)
+                    if u in nodes(edge) && weight(edge)<minweight(v)
                         v.parent=u
                         v.minweight=weight(edge)
                         add_item!(p,edge)
