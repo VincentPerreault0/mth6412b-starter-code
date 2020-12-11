@@ -14,7 +14,4 @@ for filename in filenames
     unshred_mean(filename, false, false)
     unshred_min(filename, false, false)
 end 
-filename="projet/phase5/tsp/instances/abstract-light-painting.tsp"
-#unshred_mean(filename, false, false)
 println("test complete")
-#shuffle_picture("projet/phase5/images/original/cubesmall.png","projet/phase5/images/original/cubesmall_shuffled.png")
