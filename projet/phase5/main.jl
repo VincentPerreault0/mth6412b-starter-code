@@ -10,7 +10,9 @@ filenames = ["projet/phase5/tsp/instances/abstract-light-painting.tsp",
             "projet/phase5/tsp/instances/tokyo-skytree-aerial.tsp"]
 for filename in filenames
     println("on commence l'image ", filename)
-    unshred(filename, false, false)
+    unshred_min(filename, false, false)
+    unshred_mean(filename, false, false)
+    unshred_min(filename, false, false)
 end 
 filename="projet/phase5/tsp/instances/abstract-light-painting.tsp"
 #unshred_mean(filename, false, false)
