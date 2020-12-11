@@ -2,6 +2,7 @@ include("../phase4/held_karp.jl")
 include("../phase4/rsl.jl")
 include("tools.jl")
 
+""" fonction qui calcule le cout d un tour"""
 function tsp_cost(tour::AbstractGraph)
     cost=0
     for edge in edges(tour)
@@ -10,100 +11,55 @@ function tsp_cost(tour::AbstractGraph)
     return(cost)
 end 
 
-function two_opt(graph::AbstractGraph, q::Vector{Node{T}}) where T 
+"""Ne fonctionne pas, a terminer"""
+function two_opt(graph::AbstractGraph, q::Vector{Node{T}}, iters_max:: Int64) where T 
     dist=zeros(Float64, 601,601)
     #creation des distances 
     for edge in edges(graph)
         dist[parse(Int64,name(nodes(edge)[1])),parse(Int64,name(nodes(edge)[1]))]=weight(edge)
         dist[parse(Int64,name(nodes(edge)[2])),parse(Int64,name(nodes(edge)[1]))]=weight(edge)
     end 
-    #z[i,j]=1 si l'arc (i,j) est dans le tour 
+    list=Dict{Node, Node}
+    #z[i,j]=1 si l'arc j est apres i dans le tour 
     z=zeros(Int64, 601,601)
     for i in 1:length(q)-1
         z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=1
-        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=1
+        list[q[i]]=q[i+1]
     end 
-    z[parse(Int64,name(q[1])),parse(Int64,name(q[length(q)]))]=1
+    list[q[length(q)]]=q[1]
     z[parse(Int64,name(q[length(q)])),parse(Int64,name(q[length(1)]))]=1
-
+    
     #Actualisation des arcs a garder 
-    x=length(q)
+    iter=0
     better=true
-    while better==true
-        better=false
-        for i in 1:x
-            for j in 1:x
-                if i==1
-                    if j!=1 && j!=2 && j!=x && dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]
-                        better=true
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
-                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]=1
-                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[i+1]))]=1
-                    end
-                elseif i==x 
-                    if j!=x && j!=x-1 && j!=1 && dist[parse(Int64,name(q[i])),parse(Int64,name(q[1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]
-                        better=true
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[1]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
-                        z[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]=1
-                        z[parse(Int64,name(q[1])),parse(Int64,name(q[i]))]=0
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[1]))]=1
-                    end
-                elseif i!=j && (i+1)!=j && (i-1)!=j
-                    if j==x
-                        if dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[1]))]
-                            better=true
-                            z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
-                            z[parse(Int64,name(q[j])),parse(Int64,name(q[1]))]=0
-                            z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
-                            z[parse(Int64,name(q[i+1])),parse(Int64,name(q[1]))]=1
-                            z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
-                            z[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]=0
-                            z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
-                            z[parse(Int64,name(q[1])),parse(Int64,name(q[1+i]))]=1
-                        end
-                    elseif dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]
-                        better=true
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
-                        z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
-                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]=1
-                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
-                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
-                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[i+1]))]=1
-                    end 
+    while iter<iters_max && better 
+        better=false 
+        for node1 in nodes(graph)
+            for node2 in nodes(graph)
+                if name(list[node1])!=name(node2) && name(list[node2])!=name(node1) && name(node1)!=name(node2) && dist[parse(Int64,name(node1)),parse(Int64,name(list[node1]))]+dist[parse(Int64,name(node2)),parse(Int64,name(list[node2]))]>dist[parse(Int64,name(node1)),parse(Int64,name(node2))]+dist[parse(Int64,name(list[node1])),parse(Int64,name(list[node2]))]
+                    better=true
+                    iter+=1
+                    z[parse(Int64,name(node1)),parse(Int64,name(list[node1]))]=0
+                    z[parse(Int64,name(node2)),parse(Int64,name(list[node2]))]=0
+                    z[parse(Int64,name(node1)),parse(Int64,name(node2))]=1
+                    z[parse(Int64,name(list[node1])),parse(Int64,name(list[node2]))]=1
+                    list[list[node1]]=list[node2]
+                    list[node1]=node2
                 end
             end
         end
     end  
+    println("Fin de 2opt, construction de nouveau tour")
     #Construction de nouveau tour 
-    qtmp=Vector{typeof(q[1])}()
-    for node in nodes(graph)
-        push!(qtemp, node)#nodes dans l'ordre (fonctionne pour le cas precis des images !!)
-    end
     qnew=Vector{typeof(q[1])}()
-    n=q[1]#ceci assure que le noeud 0 est au debut du tour 
+    #initialisation du nouveau tour
+    #de cette maniere le noeud 0 est toujours premier
+    push!(qnew, q[1])
+    n=list[q[1]]
+    #Boucle
     while n!=q[1]
-        in=1+parse(Int64,name(n))
-        j=1
-        while j<=size(z)[1]
-            if z[in,j]==1
-                push!(qnew, qtemp[j])
-                z[in,j]=0
-                z[j,in]=0
-                n=qtemp[j]
-                j=size(z)[1]+2
-            end
-        end
+        push!(qnew,n)
+        n=list[n]
     end
     return(qnew)
 end 
@@ -202,7 +158,7 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
             if weight(edge)>m
                 m=weight(edge) 
             end
-            if weight(edge)<mi
+            if weight(edge)<mi &&weight(edge)>0
                 mi=weight(edge)
                 edge_tmp=edge
             end
@@ -317,10 +273,10 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     reconstruct_picture(tour_name, picture_name,"reconstructed_mean "*name(graph)*".png"; view)
 end 
 
-"""fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
+"""fonction qui prend en entree le nom d un fichier, et le nombre d'iterations maximale pour 2_opt, decide si on utilise Held et Karp (true) our RSL (false)
 et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
 en instances. Si on utilise RSL on fait un 2-opt pour ameliorer le tour."""
-function unshred_2_opt(filename::String, hk::Bool, view::Bool)
+function unshred_2_opt(filename::String, hk::Bool, view::Bool, max_iters:: Int64)
     #Step 0: Create graph 
     graph = create_graph_from_stsp_file(filename, false)
     
@@ -370,7 +326,7 @@ function unshred_2_opt(filename::String, hk::Bool, view::Bool)
         #Step1: Find minimal tour 
         tmp1=rsl(graph, nodes(graph)[1])
         #Step1bis: optimise tour 
-        tmp=two_opt(graph, tmp1)
+        tmp=two_opt(graph, tmp1, max_iters)
         #Step 3: Find cost of tour
         cost=rsl_graph_weight(graph, tmp)
         #Step2: Create an array with the order
