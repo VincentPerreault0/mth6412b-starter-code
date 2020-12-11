@@ -40,6 +40,11 @@ function two_opt(graph::AbstractGraph, q::Vector{Node{T}}) where T
                         z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
                         z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
                         z[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]=1
+                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
+                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[i+1]))]=1
+                    end
                 elseif i==x 
                     if j!=x && j!=x-1 && j!=1 && dist[parse(Int64,name(q[i])),parse(Int64,name(q[1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]
                         better=true
@@ -47,12 +52,35 @@ function two_opt(graph::AbstractGraph, q::Vector{Node{T}}) where T
                         z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
                         z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
                         z[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]=1
-                elseif i!=j && (i+1)!=j && (i-1)!=j && dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[(j+1)%x]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[(j+1)%x]))]
-                    better=true
-                    z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
-                    z[parse(Int64,name(q[j])),parse(Int64,name(q[(j+1)%x]))]=0
-                    z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
-                    z[parse(Int64,name(q[i+1])),parse(Int64,name(q[(j+1)%x]))]=1
+                        z[parse(Int64,name(q[1])),parse(Int64,name(q[i]))]=0
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
+                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[1]))]=1
+                    end
+                elseif i!=j && (i+1)!=j && (i-1)!=j
+                    if j==x
+                        if dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[1]))]
+                            better=true
+                            z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
+                            z[parse(Int64,name(q[j])),parse(Int64,name(q[1]))]=0
+                            z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
+                            z[parse(Int64,name(q[i+1])),parse(Int64,name(q[1]))]=1
+                            z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
+                            z[parse(Int64,name(q[1])),parse(Int64,name(q[j+1]))]=0
+                            z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
+                            z[parse(Int64,name(q[1])),parse(Int64,name(q[1+i]))]=1
+                        end
+                    elseif dist[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]+dist[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]>dist[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]+dist[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]
+                        better=true
+                        z[parse(Int64,name(q[i])),parse(Int64,name(q[i+1]))]=0
+                        z[parse(Int64,name(q[j])),parse(Int64,name(q[j+1]))]=0
+                        z[parse(Int64,name(q[i])),parse(Int64,name(q[j]))]=1
+                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[j+1]))]=1
+                        z[parse(Int64,name(q[i+1])),parse(Int64,name(q[i]))]=0
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[j]))]=0
+                        z[parse(Int64,name(q[j])),parse(Int64,name(q[i]))]=1
+                        z[parse(Int64,name(q[j+1])),parse(Int64,name(q[i+1]))]=1
+                    end 
                 end
             end
         end
