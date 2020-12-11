@@ -1,5 +1,5 @@
-NAME : marlet2-radio-board_tour
-COMMENT : LENGHT = 9.36958e6
+NAME : marlet2-radio-board_min_tour
+COMMENT : LENGHT = 9.369581e6
 TYPE : TOUR
 DIMENSION : 601
 TOUR_SECTION

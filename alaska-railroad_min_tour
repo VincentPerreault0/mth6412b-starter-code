@@ -1,5 +1,5 @@
-NAME : alaska-railroad_tour
-COMMENT : LENGHT = 8.058329e6
+NAME : alaska-railroad_min_tour
+COMMENT : LENGHT = 8.058328e6
 TYPE : TOUR
 DIMENSION : 601
 TOUR_SECTION

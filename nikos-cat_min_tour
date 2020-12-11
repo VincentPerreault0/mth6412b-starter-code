@@ -1,5 +1,5 @@
-NAME : nikos-cat_tour
-COMMENT : LENGHT = 3.427468e6
+NAME : nikos-cat_min_tour
+COMMENT : LENGHT = 3.427467e6
 TYPE : TOUR
 DIMENSION : 601
 TOUR_SECTION
