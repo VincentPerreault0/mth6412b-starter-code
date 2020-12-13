@@ -6,65 +6,16 @@ using InteractiveUtils
 
 # ╔═╡ 5306c162-03f3-11eb-3b80-3577af92365c
 md"# Rapport du projet d'Implémentation d'algo. de rech. opérationnelle
-## Phase 3 : 02/11/2020
+## Phase 5 : 14/12/2020
 Antonin Kenens, Vincent Perreault et Laura Kolcheva
-Dépôt github à l'adresse suivante : https://github.com/VincentPerreault0/mth6412b-starter-code/tree/Phase3
-### Question 1 : Implémenter les deux heuristiques d'accélération et répondre à la question sur le rang.
-Nous avons réutilisé nos structures de données précédentes pour les noeuds et les liens. Nous avons modifié la structure de donnée des noeuds pour prendre en compte le parent de chaque noeud. Les composantes connexes sont donc des ensembles de noeuds qui ont des liens de parenté. La spécificité est que la racine d'une composant connexe n'a pas de parent. Nous avons fait ce choix pour éviter les références circulaires."
+Dépôt github à l'adresse suivante :
+"
+
+# ╔═╡ a2bed920-3d70-11eb-1788-bd5385f4a538
+md"Nous mettons et cachons ici les méthodes très longues liées aux types de donéés Node, Edge et Graphe que nous n'avons pas changé" 
 
 # ╔═╡ 1a1785b0-1b68-11eb-0070-8b3453a5c896
-md"Nous avons aussi rajouté l'attribut rank à tous les noeuds pour pouvoir mettre en place l'heuristique de compression des chemins. L'attribut minweight est utilie pour la question 2."
-
-# ╔═╡ 191cd200-1b68-11eb-0957-29dae81b83fd
-md"Nous avons ensuite étendu les méthodes de notre implémentation de Node pour prendre en compte les nouveaux attributs de Node." 
-
-# ╔═╡ 38e5bb30-03f6-11eb-332a-7161bc93b80e
-begin
-	"""Type abstrait dont d'autres types de noeuds dériveront."""
-	abstract type AbstractNode{T} end
-
-	"""Type représentant les noeuds d'un graphe."""
-	mutable struct Node{T} <: AbstractNode{T}
-		name::String
-		data::T
-		rank::Int64
-  		parent ::Union{Nothing,Node{T}}
-  		minweight::Int64
-	end
-	
-	"""Type représentant les arêtes d'un graphe."""
-	struct Edge
-	  weight::Float64
-	  nodes::Tuple{AbstractNode,AbstractNode}
-	end
-	
-	"""initialise un noeud uniquement avec un nom et un data""" 
-	function Node(name:: String, data)
-	  return(Node{typeof(data)}(name, data, 0, nothing, 10000))
-	end
-
-	function Node(name:: String, data, rank :: Int64)
-	 return(Node{typeof(data)}(name, data, rank, nothing, 10000))
-	end
-
-	function Node(name:: String, data, parent :: Node)
-	 return(Node{typeof(data)}(name, data, 0, parent, 10000))
-	end
-
-	# on présume que tous les noeuds dérivant d'AbstractNode
-	# posséderont des champs `name`,`data` 'rank, 'parent' et 'minweight'.
-
-	"""Renvoie le rank du noeud."""
-	rank(node::AbstractNode) = node.rank
-
-	"""Renvoie le parent du noeud."""
-	parent(node::AbstractNode) = node.parent
-
-	""" Renvoie minweight du noeud"""
-	function minweight(node::AbstractNode)
-		node.minweight
-	end
-end
+md"Nous avons en premier implementé une fonction tour__cost qui renvoie la somme des coûts des arrêtes d'un tour. Cette fonction est testée dans le fichier unit_tests_phase5.jl sur l'exemple donné en cours."
 
 # ╔═╡ beed4ca0-1b6d-11eb-1df2-1bc126052fd8
 md"Nous introduisons maintenant l'heuristique de la compression des chemins.
@@ -120,177 +71,22 @@ md"Nous rappelons ici les méthodes d'affichage pour les différents types."
 # ╔═╡ 577b6750-03f8-11eb-2d86-2332501352c2
 md"Nous cachons ci-dessous la majorité des méthodes pour les graphes."
 
-# ╔═╡ 9c2252fe-03f8-11eb-0d5e-771b7a1409a7
+# ╔═╡ 38e5bb30-03f6-11eb-332a-7161bc93b80e
 begin
-	"""Type abstrait représentant un graphe comme un nom et un ensemble de noeuds et de liens.
-
-	Présume les champs suivants:
-	  name::String
-	  nodes::Vector{Node{T}}
-	  edges::Vector{Edge}
-
-	Attention, tous les noeuds doivent avoir des données de même type.
-	"""
-	abstract type AbstractGraph{T} end
 	
-	"""Renvoie le nom du graphe."""
-	name(graph::AbstractGraph) = graph.name
-
-	"""Renvoie la liste des noeuds du graphe."""
-	nodes(graph::AbstractGraph) = graph.nodes
-
-	"""Renvoie la liste des arêtes du graphe."""
-	edges(graph::AbstractGraph) = graph.edges
-
-	"""Renvoie le nombre de noeuds du graphe."""
-	function nb_nodes(graph::AbstractGraph)
-		length(graph.nodes)
-	end
-
-	"""Renvoie le nombre d'arêtes du graphe."""
-	nb_edges(graph::AbstractGraph) = length(graph.edges)
-
-	"""Vérifie si le graphe contient un certain noeud."""
-	function contains_node(graph::AbstractGraph{T}, node::AbstractNode{T}) where T
-		node in graph.nodes
-	end
-
-	"""Vérifie si le graphe contient un certain lien."""
-	contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
-
-	"""Structure concrète d'un graphe."""
-	mutable struct Graph{T} <: AbstractGraph{T}
-	  name::String
-	  nodes::Vector{Node{T}}
-	  edges::Vector{Edge}
-	end
-
-	"""Structure concrète representant un graphe comme un ensemble de noeuds et de liens.
-
-	Exemple :
-
-		node1 = Node("Joe", 3.14)
-		node2 = Node("Steve", exp(1))
-		node3 = Node("Jill", 4.12)
-		edge1 = Edge(500, (node1, node2))
-		edge2 = Edge(1000, (node2, node3))
-		G = Graph("Ick", [node1, node2, node3], [edge1, edge2])
-
-	Attention, tous les noeuds doivent avoir des données de même type.
-	"""
-
-	"""Crée un graphe vide."""
-	create_empty_graph(graphname::String, type::Type) = Graph{type}(graphname,[],[])
-
-	"""Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
-	function create_graph_from_stsp_file(filepath::String, verbose::Bool)
-	  # Utilisation de la fonction read_stsp
-	  graph_nodes, graph_edges = read_stsp(filepath, verbose)
-
-	  # Définition des constantes
-	  dim_nodes = length(graph_nodes)
-	  edges = Edge[]
-	  dim_edges = length(graph_edges)
-
-	  # Création des nodes 
-	  if (dim_nodes != 0)
-		  nodes = Node{typeof(graph_nodes[1])}[]
-		  for node_ind in 1 : dim_nodes
-			  node = Node(string(node_ind), graph_nodes[node_ind])
-			  push!(nodes, node)
-		  end
-	  else
-		  # Si les nodes n'ont pas de data, on leur donne une data nulle : "nothing"
-		  nodes = Node{Nothing}[]
-		  for node_ind in 1 : dim_edges
-			  node = Node(string(node_ind), nothing)
-			  push!(nodes, node)
-		  end
-	  end
-
-	  # Création des edges à partir des nodes
-	  for i in 1 : dim_edges
-		  dim = length(graph_edges[i])
-		  for j in 1 : dim
-			  first_node = i
-			  second_node = graph_edges[i][j][1]
-			  edge_weight = graph_edges[i][j][2]
-			  edge = Edge(edge_weight, (nodes[first_node], nodes[second_node]))
-			  push!(edges, edge)
-		  end
-	  end
-
-	  # Création du nom du graphe à partir du nom du fichier
-	  split_filepath = split(filepath, "/")
-	  filename = split_filepath[length(split_filepath)]
-	  split_filename = split(filename, ".")
-	  graphname = String(split_filename[1])
-
-	  # Création du graphe
-	  return Graph(graphname, nodes, edges)
-	end
-end
-
-# ╔═╡ 0f490af0-03f8-11eb-12d5-e5fd4d401a87
-begin
-	import Base.show
-	"""Affiche un noeud."""
-	function show(node::AbstractNode)
-	  println("Node ", name(node), ", data: ", data(node), " rank: ", rank(node), " parent: ", parent(node))
-	end
 	
-	"""Affiche un graphe"""
-	function show(graph::AbstractGraph)
-	  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
-	  for node in nodes(graph)
-		show(node)
-	  end
-	  for edge in edges(graph)
-		show(edge)
-	  end
-	end
-	
-	"""Affiche une arête."""
-	function show(edge::Edge)
-	  println("Edge weight : ", string(weight(edge)))
-	  for node in nodes(edge)
-		print("  ")
-		show(node)
-	  end
-	end
+	""" fonction qui calcule le cout d un tour"""
+	function tsp_cost(tour::AbstractGraph)
+		cost=0
+		for edge in edges(tour)
+			cost+=weight(edge)
+		end
+		return(cost)
+	end 
 end
 
 # ╔═╡ 642d19a0-1b6b-11eb-37ec-139af6dcaa77
 md" Les méthodes add_ node et add_ edge ont été modifiées pour prendre en compte si un noeud/edge appartient déjà à un graphe avant de l'ajouter au graphe."
-
-# ╔═╡ a3e16380-1b6b-11eb-28d8-3f3e7b152b73
-begin	
-	"""Ajoute un noeud au graphe."""
-	function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
-	  if contains_node(graph,node)
-		return(graph)
-	  else
-		push!(graph.nodes, node)
-		return(graph)
-	  end
-	end
-	
-	"""Ajoute une arête au graphe."""
-	function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
-	  if contains_edge(graph, edge)
-		return(graph)
-	  else
-		push!(graph.edges, edge)
-		# Si les noeuds du lien ne font pas partie du graphe, les rajouter
-		for node in edge.nodes
-		  if !contains_node(graph, node)
-			add_node!(graph, node)
-		  end
-		end
-		return(graph)
-	  end
-	end
-end 
 
 # ╔═╡ 01be4980-03f9-11eb-1f3d-cd8b8ccb2c6c
 md"Nous pouvons finalement donner notre implémentation de l'algorithme de Kruskal avec les deux nouvelles heuristiques."
@@ -525,22 +321,6 @@ Pour tester les méthodes de Node, PriorityQueue, ainsi que la nouvelle impléme
 
 # ╔═╡ 41194c80-1b76-11eb-0213-df76fbdf3bb8
 md"Nous avons implémenté la méthode 'total_weight' pour pouvoir calculer le le poids total des arrêtes d'un graphe"
-
-# ╔═╡ 5a2c0fa0-1b76-11eb-1904-953a94d8394c
-begin 
-	""" donne la somme des poids des arretes d un graphe"""
-	function total_weight(graph:: AbstractGraph)
-	  if nb_nodes(graph)==0
-		return(0)
-	  else
-		s=0
-		for edge in graph.edges
-		  s+=weight(edge)
-		end
-		return(s)
-	  end
-	end
-end
 
 # ╔═╡ 19deffd0-1b84-11eb-2b11-f98efe6d0313
 begin	
@@ -862,10 +642,315 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 # ╔═╡ 6fb52b60-03ff-11eb-18f5-197003df938a
 md"Comme on peut le lire, nous obtenons la sortie attendue, c'est-à-dire que nous obenons pour chaque graphe d'entrée un graphe connexe en sortie avec le même nombre de noeud *N* et un nombre de lien égal à *N*-1. Les graphe de sortie étant connexes par construction, nous obtenons ainsi bien des arbres de recouvrement. De plus, les algorithmes de Kruskal et de Prim assurent que ces arbres de recouvrement sont bel et bien minimaux. "
 
+# ╔═╡ 5a2c0fa0-1b76-11eb-1904-953a94d8394c
+begin 
+	""" donne la somme des poids des arretes d un graphe"""
+	function total_weight(graph:: AbstractGraph)
+	  if nb_nodes(graph)==0
+		return(0)
+	  else
+		s=0
+		for edge in graph.edges
+		  s+=weight(edge)
+		end
+		return(s)
+	  end
+	end
+end
+
+# ╔═╡ 0f490af0-03f8-11eb-12d5-e5fd4d401a87
+begin
+	import Base.show
+	"""Affiche un noeud."""
+	function show(node::AbstractNode)
+	  println("Node ", name(node), ", data: ", data(node), " rank: ", rank(node), " parent: ", parent(node))
+	end
+	
+	"""Affiche un graphe"""
+	function show(graph::AbstractGraph)
+	  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+	  for node in nodes(graph)
+		show(node)
+	  end
+	  for edge in edges(graph)
+		show(edge)
+	  end
+	end
+	
+	"""Affiche une arête."""
+	function show(edge::Edge)
+	  println("Edge weight : ", string(weight(edge)))
+	  for node in nodes(edge)
+		print("  ")
+		show(node)
+	  end
+	end
+end
+
+# ╔═╡ a21c5790-3d70-11eb-2004-d970d56eb8b4
+begin
+
+	"""Type abstrait dont d'autres types de noeuds dériveront."""
+	abstract type AbstractNode{T} end
+
+	"""Type représentant les noeuds d'un graphe.
+	"""
+	mutable struct Node{T} <: AbstractNode{T}
+	  name::String
+	  data::T
+	  rank::Int64
+	  parent ::Union{Nothing,Node{T}}
+	  minweight::Float64
+	  number::Int64
+	end
+
+	mutable struct Edge
+	  weight::Float64
+	  nodes::Tuple{AbstractNode,AbstractNode}
+	end
+
+	"""Type abstrait dont d'autres types de noeuds dériveront."""
+	abstract type AbstractGraph{T} end
+
+	"""Renvoie le nom du graphe."""
+	name(graph::AbstractGraph) = graph.name
+
+	"""Renvoie la liste des noeuds du graphe."""
+	nodes(graph::AbstractGraph) = graph.nodes
+
+	"""Renvoie la liste des arêtes du graphe."""
+	edges(graph::AbstractGraph) = graph.edges
+
+	"""Renvoie le nombre de noeuds du graphe."""
+	function nb_nodes(graph::AbstractGraph)
+		length(graph.nodes)
+	end
+
+	"""Renvoie le nombre d'arêtes du graphe."""
+	nb_edges(graph::AbstractGraph) = length(graph.edges)
+
+
+	"""Affiche un graphe"""
+	function show(graph::AbstractGraph)
+	  println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+	  for node in nodes(graph)
+		show(node)
+	  end
+	  for edge in edges(graph)
+		show(edge)
+	  end
+	end
+
+	"""Vérifie si le graphe contient un certain noeud."""
+	function contains_node(graph::AbstractGraph{T}, node::AbstractNode{T}) where T
+		node in graph.nodes
+	end
+
+	"""Ajoute un noeud au graphe."""
+	function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
+	  if contains_node(graph,node)
+		return(graph)
+	  else
+		push!(graph.nodes, node)
+		return(graph)
+	  end
+	end
+
+	"""Ajoute un noeud au graphe à la position donnée."""
+	function insert_node!(graph:: AbstractGraph{T}, index::Int64, node::AbstractNode{T}) where T
+	  if contains_node(graph,node)
+		return(graph)
+	  else
+		insert!(graph.nodes, index, node)
+		return(graph)
+	  end
+	end
+
+	"""Vérifie si le graphe contient un certain lien."""
+	contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
+
+	"""Ajoute une arête au graphe."""
+	function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
+	  if contains_edge(graph, edge)
+		return(graph)
+	  else
+		push!(graph.edges, edge)
+		# Si les noeuds du lien ne font pas partie du graphe, les rajouter
+		for node in edge.nodes
+		  if !contains_node(graph, node)
+			add_node!(graph, node)
+		  end
+		end
+		return(graph)
+	  end
+	end
+
+	""" donne la somme des poids des arretes d un graphe"""
+	function total_weight(graph:: AbstractGraph)
+		if nb_nodes(graph)==0
+			return(0)
+		else
+			s=0
+			for edge in graph.edges
+		  		s+=weight(edge)
+			end
+		return(s)
+		end
+	end
+	
+	"""Structure concrète d'un graphe."""
+	mutable struct Graph{T} <: AbstractGraph{T}
+		name::String
+		nodes::Vector{Node{T}}
+		edges::Vector{Edge}
+	end
+end
+
+# ╔═╡ 9c2252fe-03f8-11eb-0d5e-771b7a1409a7
+begin
+	"""Type abstrait représentant un graphe comme un nom et un ensemble de noeuds et de liens.
+
+	Présume les champs suivants:
+	  name::String
+	  nodes::Vector{Node{T}}
+	  edges::Vector{Edge}
+
+	Attention, tous les noeuds doivent avoir des données de même type.
+	"""
+	abstract type AbstractGraph{T} end
+	
+	"""Renvoie le nom du graphe."""
+	name(graph::AbstractGraph) = graph.name
+
+	"""Renvoie la liste des noeuds du graphe."""
+	nodes(graph::AbstractGraph) = graph.nodes
+
+	"""Renvoie la liste des arêtes du graphe."""
+	edges(graph::AbstractGraph) = graph.edges
+
+	"""Renvoie le nombre de noeuds du graphe."""
+	function nb_nodes(graph::AbstractGraph)
+		length(graph.nodes)
+	end
+
+	"""Renvoie le nombre d'arêtes du graphe."""
+	nb_edges(graph::AbstractGraph) = length(graph.edges)
+
+	"""Vérifie si le graphe contient un certain noeud."""
+	function contains_node(graph::AbstractGraph{T}, node::AbstractNode{T}) where T
+		node in graph.nodes
+	end
+
+	"""Vérifie si le graphe contient un certain lien."""
+	contains_edge(graph::AbstractGraph{T}, edge::Edge) where T = edge in graph.edges
+
+	"""Structure concrète d'un graphe."""
+	mutable struct Graph{T} <: AbstractGraph{T}
+	  name::String
+	  nodes::Vector{Node{T}}
+	  edges::Vector{Edge}
+	end
+
+	"""Structure concrète representant un graphe comme un ensemble de noeuds et de liens.
+
+	Exemple :
+
+		node1 = Node("Joe", 3.14)
+		node2 = Node("Steve", exp(1))
+		node3 = Node("Jill", 4.12)
+		edge1 = Edge(500, (node1, node2))
+		edge2 = Edge(1000, (node2, node3))
+		G = Graph("Ick", [node1, node2, node3], [edge1, edge2])
+
+	Attention, tous les noeuds doivent avoir des données de même type.
+	"""
+
+	"""Crée un graphe vide."""
+	create_empty_graph(graphname::String, type::Type) = Graph{type}(graphname,[],[])
+
+	"""Crée un graphe symétrique depuis un ficher lisible par read_stsp."""
+	function create_graph_from_stsp_file(filepath::String, verbose::Bool)
+	  # Utilisation de la fonction read_stsp
+	  graph_nodes, graph_edges = read_stsp(filepath, verbose)
+
+	  # Définition des constantes
+	  dim_nodes = length(graph_nodes)
+	  edges = Edge[]
+	  dim_edges = length(graph_edges)
+
+	  # Création des nodes 
+	  if (dim_nodes != 0)
+		  nodes = Node{typeof(graph_nodes[1])}[]
+		  for node_ind in 1 : dim_nodes
+			  node = Node(string(node_ind), graph_nodes[node_ind])
+			  push!(nodes, node)
+		  end
+	  else
+		  # Si les nodes n'ont pas de data, on leur donne une data nulle : "nothing"
+		  nodes = Node{Nothing}[]
+		  for node_ind in 1 : dim_edges
+			  node = Node(string(node_ind), nothing)
+			  push!(nodes, node)
+		  end
+	  end
+
+	  # Création des edges à partir des nodes
+	  for i in 1 : dim_edges
+		  dim = length(graph_edges[i])
+		  for j in 1 : dim
+			  first_node = i
+			  second_node = graph_edges[i][j][1]
+			  edge_weight = graph_edges[i][j][2]
+			  edge = Edge(edge_weight, (nodes[first_node], nodes[second_node]))
+			  push!(edges, edge)
+		  end
+	  end
+
+	  # Création du nom du graphe à partir du nom du fichier
+	  split_filepath = split(filepath, "/")
+	  filename = split_filepath[length(split_filepath)]
+	  split_filename = split(filename, ".")
+	  graphname = String(split_filename[1])
+
+	  # Création du graphe
+	  return Graph(graphname, nodes, edges)
+	end
+end
+
+# ╔═╡ a3e16380-1b6b-11eb-28d8-3f3e7b152b73
+begin	
+	"""Ajoute un noeud au graphe."""
+	function add_node!(graph:: AbstractGraph{T}, node::AbstractNode{T}) where T
+	  if contains_node(graph,node)
+		return(graph)
+	  else
+		push!(graph.nodes, node)
+		return(graph)
+	  end
+	end
+	
+	"""Ajoute une arête au graphe."""
+	function add_edge!(graph::AbstractGraph{T}, edge::Edge) where T
+	  if contains_edge(graph, edge)
+		return(graph)
+	  else
+		push!(graph.edges, edge)
+		# Si les noeuds du lien ne font pas partie du graphe, les rajouter
+		for node in edge.nodes
+		  if !contains_node(graph, node)
+			add_node!(graph, node)
+		  end
+		end
+		return(graph)
+	  end
+	end
+end 
+
 # ╔═╡ Cell order:
 # ╟─5306c162-03f3-11eb-3b80-3577af92365c
-# ╟─1a1785b0-1b68-11eb-0070-8b3453a5c896
-# ╟─191cd200-1b68-11eb-0957-29dae81b83fd
+# ╟─a2bed920-3d70-11eb-1788-bd5385f4a538
+# ╠═a21c5790-3d70-11eb-2004-d970d56eb8b4
+# ╠═1a1785b0-1b68-11eb-0070-8b3453a5c896
 # ╠═38e5bb30-03f6-11eb-332a-7161bc93b80e
 # ╟─beed4ca0-1b6d-11eb-1df2-1bc126052fd8
 # ╠═c94af48e-1b6d-11eb-36f7-83d3bdfda165
