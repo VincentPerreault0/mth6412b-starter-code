@@ -75,7 +75,7 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -117,12 +117,20 @@ function unshred(filename::String, hk::Bool, view::Bool)
     end
 
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_tour.txt"
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_tour.txt"
+    end
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
+    end
 end 
 
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -136,7 +144,7 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -186,12 +194,20 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     end
 
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_min_tour.txt"
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_min_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_min_tour.txt"
+    end
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
+    end 
 end 
 
 """fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -205,7 +221,7 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -265,12 +281,20 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
         end
     end
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_mean_tour.txt"
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_mean_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_mean_tour.txt"
+    end
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
+    end
 end 
 
 """fonction qui prend en entree le nom d un fichier, et le nombre d'iterations maximale pour 2_opt, decide si on utilise Held et Karp (true) our RSL (false)
@@ -284,7 +308,7 @@ function unshred_2_opt(filename::String, hk::Bool, view::Bool, max_iters:: Int64
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 0.1 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
