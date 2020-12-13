@@ -806,6 +806,9 @@ Antonin Kenens, Vincent Perreault et Laura Kolcheva
 Dépôt github à l'adresse suivante :
 "
 
+# ╔═╡ 74929e92-3d86-11eb-2bef-271e790eab88
+md"###### Il faut noter que tous les tours et photos reconstruites générés dans cette phase sont présents dans: mth6412b-starter-code\projet\phase5\images\solutions"
+
 # ╔═╡ a2bed920-3d70-11eb-1788-bd5385f4a538
 md"Nous mettons et cachons ici les méthodes très longues liées aux types de donées Node, Edge, Graph et PriorityQueue ainsi que les fonctions de read_stsp.jl que nous n'avons pas changé depuis la phase précédente."
 
@@ -1385,7 +1388,7 @@ md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruir
 md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
 Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
 Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
-#### On a ajouté 'new' pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
+###### On a ajouté 'new' pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
 
 # ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
 md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous rendu le poids de toutes les arrêtes partant du noeud 0 plus élevés que le poids de l'arrête la plus la lourde du graphe."
@@ -1656,6 +1659,7 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 
 # ╔═╡ Cell order:
 # ╟─5306c162-03f3-11eb-3b80-3577af92365c
+# ╟─74929e92-3d86-11eb-2bef-271e790eab88
 # ╟─a2bed920-3d70-11eb-1788-bd5385f4a538
 # ╟─a21c5790-3d70-11eb-2004-d970d56eb8b4
 # ╟─0e058062-3d7d-11eb-1c2f-35bf63936a6b
@@ -1665,7 +1669,7 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 # ╠═38e5bb30-03f6-11eb-332a-7161bc93b80e
 # ╟─84063ae0-1b70-11eb-1407-ff11932e99b6
 # ╟─8e12f4c0-3d7f-11eb-2894-13e7ed1985f1
-# ╟─cb920f20-3d7f-11eb-3e9a-3384dc2f11db
+# ╠═cb920f20-3d7f-11eb-3e9a-3384dc2f11db
 # ╟─0844bc50-3d81-11eb-0e58-edce2d809d75
 # ╠═e779eb3e-3d7f-11eb-3983-379a480d35a9
 # ╠═49e6cc70-3d81-11eb-057c-632b5ec8c846
