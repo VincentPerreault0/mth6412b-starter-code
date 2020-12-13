@@ -1388,10 +1388,10 @@ md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruir
 md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
 Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
 Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
-###### On a ajouté 'new' pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
+###### On a ajouté 'new' dans le nom des photos et tours pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
 
 # ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
-md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous rendu le poids de toutes les arrêtes partant du noeud 0 plus élevés que le poids de l'arrête la plus la lourde du graphe."
+md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous avons rendu le poids de toutes les arrêtes partant du noeud 0 plus élevé que le poids de l'arrête la plus la lourde du graphe."
 
 # ╔═╡ e779eb3e-3d7f-11eb-3983-379a480d35a9
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -1648,7 +1648,10 @@ end
 # ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
 md" Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux." 
 
-# ╔═╡ 3cb5c6f0-3d86-11eb-3dbe-db9dbaca8ae6
+# ╔═╡ 4136f762-3d88-11eb-2101-d54b19d42742
+imshow("images/solutions/reconstructed_new abstract-light-painting.png")
+
+# ╔═╡ 41345f50-3d88-11eb-27c3-cd012a33c590
 
 
 # ╔═╡ cfe77820-03fb-11eb-0b68-c9f065d0e1d7
@@ -1669,17 +1672,18 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 # ╠═38e5bb30-03f6-11eb-332a-7161bc93b80e
 # ╟─84063ae0-1b70-11eb-1407-ff11932e99b6
 # ╟─8e12f4c0-3d7f-11eb-2894-13e7ed1985f1
-# ╠═cb920f20-3d7f-11eb-3e9a-3384dc2f11db
+# ╟─cb920f20-3d7f-11eb-3e9a-3384dc2f11db
 # ╟─0844bc50-3d81-11eb-0e58-edce2d809d75
 # ╠═e779eb3e-3d7f-11eb-3983-379a480d35a9
-# ╠═49e6cc70-3d81-11eb-057c-632b5ec8c846
-# ╠═d6b19590-3d81-11eb-349f-6bea185c1046
+# ╟─49e6cc70-3d81-11eb-057c-632b5ec8c846
+# ╟─d6b19590-3d81-11eb-349f-6bea185c1046
 # ╠═2f4763f0-3d83-11eb-19ef-cb3e2696b7a0
 # ╟─42928200-3d83-11eb-3bfa-332178fd2405
-# ╠═d29d4900-3d85-11eb-077b-61cf5ebe96e8
-# ╠═c33c8480-3d85-11eb-1b82-31de9c53481f
+# ╟─d29d4900-3d85-11eb-077b-61cf5ebe96e8
+# ╟─c33c8480-3d85-11eb-1b82-31de9c53481f
 # ╠═82bd6600-3d84-11eb-167f-47a00a1325a4
 # ╟─90c6d7e0-3d84-11eb-302f-2748b11b08fc
-# ╠═3cb5c6f0-3d86-11eb-3dbe-db9dbaca8ae6
+# ╠═4136f762-3d88-11eb-2101-d54b19d42742
+# ╠═41345f50-3d88-11eb-27c3-cd012a33c590
 # ╟─cfe77820-03fb-11eb-0b68-c9f065d0e1d7
 # ╠═ec1c0d50-03fe-11eb-21d9-5b465d93cc57
