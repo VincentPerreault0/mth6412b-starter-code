@@ -1381,6 +1381,273 @@ end
 # ╔═╡ 84063ae0-1b70-11eb-1407-ff11932e99b6
 md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruire des images 'déchiquetées' à l'aide des fonctions présentent dans le fichier tools,jl. Nous allons en premier introduire ces fonctions en les cachant." 
 
+# ╔═╡ cb920f20-3d7f-11eb-3e9a-3384dc2f11db
+md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
+Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
+Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
+#### On a ajouté 'new' pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
+
+# ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
+md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous rendu le poids de toutes les arrêtes partant du noeud 0 plus élevés que le poids de l'arrête la plus la lourde du graphe."
+
+# ╔═╡ e779eb3e-3d7f-11eb-3983-379a480d35a9
+""" fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
+et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
+en instances."""
+function unshred(filename::String, hk::Bool, view::Bool)
+    #Step 0: Create graph 
+    graph = create_graph_from_stsp_file(filename, false)
+    
+    #Choose algorithm
+    if hk #Use Held and Karp alg
+        #Step 1: Find minimal tour
+        pi_mg = zeros(nb_nodes(graph))
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        graphe_tour = get_tour(graph, tree_graph)
+        if is_tour(graphe_tour)
+        else
+            println("Not a tour")
+        end
+        #Step 2: Create an array with the order
+        liste=Vector{Int64}()
+        for edge in edges(graphe_tour)
+            push!(liste, parse(Int64,name(nodes(edge)[1])))
+        end
+        #Step 3: Find cost of tour
+        cost=tsp_cost(graphe_tour)
+    else #use RSL
+        #we need to prepare the graph
+        m=0
+        edge_tmp=edges(graph)[1]
+        for edge in edges(graph)
+            if weight(edge)>m
+                m=weight(edge) 
+            end
+        end
+        #Make sure node minweights are big enough (otherwise Prim will give a false result) 
+        for node in nodes(graph)
+            node.minweight=m*5
+        end
+        #modify edge weights for edges from 0
+        for edge in edges(graph)[1:length(nodes(graph))-1]
+            edge.weight=m+2
+        end 
+        #Step1: Find minimal tour 
+        tmp=rsl(graph, nodes(graph)[1])
+        #Step 3: Find cost of tour
+        cost=rsl_graph_weight(graph, tmp)
+        #Step2: Create an array with the order
+        liste=Vector{Int64}()
+        while length(tmp)>0
+            push!(liste, parse(Int64,name(popfirst!(tmp))))
+        end
+    end
+
+    #Step 4: Write tour
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_tour.txt"
+    end
+    write_tour(tour_name,liste, cost)
+
+    #Step 5: Reconstruct picture
+    picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
+    end
+end 
+
+# ╔═╡ 49e6cc70-3d81-11eb-057c-632b5ec8c846
+md" Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
+
+
+# ╔═╡ d6b19590-3d81-11eb-349f-6bea185c1046
+md"Nous avons voulu améliorer le rendu de la fonction unshred (notamment pour RSL). Nous nous sommes rendu compte que les images étaient bien reconstruite à part une coupure dans l'image reconstruire qui correspondait souvent à un des bords de l'image. Dans un premier temps, on a voulu s'assurer que l'arrête de poids minimum était bien dans le graphe. En effet, avec le noeud 0 et tous les arcs sortant de 0 avec le même poids, l'algorithme prenait toujours comme source le noeud 1. On a changé ceci en forcant l'algorithme à aller visiter un des noeuds de l'arc à poids minimum. Nous avons donc implémenté la fonction unshred_min qui prend en entrée les mêmes paramètres, qui renvoient un tour et une image reconstruite mais avec la spécificité de visiter l'arc à poids minimal." 
+
+# ╔═╡ 2f4763f0-3d83-11eb-19ef-cb3e2696b7a0
+""" fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
+et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
+en instances. On force le tour de commencer par un des noeuds de l'arc de poids minimal"""
+function unshred_min(filename::String, hk::Bool, view::Bool)
+    #Step 0: Create graph 
+    graph = create_graph_from_stsp_file(filename, false)
+    
+    #Choose algorithm
+    if hk #Use Held and Karp alg
+        #Step 1: Find minimal tour
+        pi_mg = zeros(nb_nodes(graph))
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        graphe_tour = get_tour(graph, tree_graph)
+        if is_tour(graphe_tour)
+        else
+            println("Not a tour")
+        end
+        #Step 2: Create an array with the order
+        liste=Vector{Int64}()
+        for edge in edges(graphe_tour)
+            push!(liste, parse(Int64,name(nodes(edge)[1])))
+        end
+        #Step 3: Find cost of tour
+        cost=tsp_cost(graphe_tour)
+    else #use RSL
+        #we need to prepare the graph
+        m=0
+        mi=1000000
+        edge_tmp=edges(graph)[1]
+        for edge in edges(graph)
+            if weight(edge)>m
+                m=weight(edge) 
+            end
+            if weight(edge)<mi &&weight(edge)>0
+                mi=weight(edge)
+                edge_tmp=edge
+            end
+        end
+        #Make sure node minweights are big enough (otherwise Prim will give a false result) 
+        for node in nodes(graph)
+            node.minweight=m*5
+        end
+        #modify edge weights for edges from 0
+        for edge in edges(graph)[1:length(nodes(graph))-1]
+            edge.weight=m+2
+        end 
+        node1=nodes(edge_tmp)[1]
+        indice=parse(Int64,name(node1))
+        edges(graph)[indice].weight=m+1
+        #Step1: Find minimal tour 
+        tmp=rsl(graph, nodes(graph)[1])
+        #Step 3: Find cost of tour
+        cost=rsl_graph_weight(graph, tmp)
+        #Step2: Create an array with the order
+        liste=Vector{Int64}()
+        while length(tmp)>0
+            push!(liste, parse(Int64,name(popfirst!(tmp))))
+        end
+    end
+
+    #Step 4: Write tour
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_min_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_min_tour.txt"
+    end
+    write_tour(tour_name,liste, cost)
+
+    #Step 5: Reconstruct picture
+    picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
+    end 
+end 
+
+# ╔═╡ 42928200-3d83-11eb-3bfa-332178fd2405
+md"Nous nous sommes rendu compte que cette technique n'améliorait pas toujours le résultat donné. De plus, elle ne remédiait pas à la coupure en milieu de l'image."
+
+# ╔═╡ d29d4900-3d85-11eb-077b-61cf5ebe96e8
+md"Nous avons en premier voulu trouver l'arrête la plus lourde utilisée dans le tour. Logiquement cette arrête devrait être prêt de la coupure. Nous avons implémenté un algorithme qui décale toute l'image vers la droite jusqu'à ce que la colonne après l'arrête la plus longue soit première dans le tour. De même, nous avons essayé de calculer la différence de poids entre les arrêtes consécutive. Nous avons implémenté un algorithme qui décale l'image vers la droite pour que l'arrête avec la différence de poids la plus élevée se retrouve en début de tour. Nous ne mettons pas les algortimes pour ces deux fonctions ici parce qu'ils n'ont pas donné de bons résultats. On se retouvait souvent avec deux coupures plutôt qu'une. "
+
+# ╔═╡ c33c8480-3d85-11eb-1b82-31de9c53481f
+md"Nous avons alors eu le raisonnement suivant. Les colonnes du bord doivent, en moyenne, être plus différentes de l'ensemble des autres colonnes, que les colonnes en milieu de photo. Nous avons donc implémenté la fonction unshred__ mean qui, de la même manière que unshred_min, force l'algorithme de tournée minimale à commencer par le noeud le plus éloigné en moyenne de tous les autres noeuds. Cet algorithme a souvent amélioré le résultat obtenu, ou a du moins décalé les coupures vers les bors des images."
+
+# ╔═╡ 82bd6600-3d84-11eb-167f-47a00a1325a4
+"""fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
+et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
+en instances. On force le tour a commencer qui est le plus loin en moyenne des autres noeuds"""
+function unshred_mean(filename::String, hk::Bool, view::Bool)
+    #Step 0: Create graph 
+    graph = create_graph_from_stsp_file(filename, false)
+    
+    #Choose algorithm
+    if hk #Use Held and Karp alg
+        #Step 1: Find minimal tour
+        pi_mg = zeros(nb_nodes(graph))
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        graphe_tour = get_tour(graph, tree_graph)
+        if is_tour(graphe_tour)
+        else
+            println("Not a tour")
+        end
+        #Step 2: Create an array with the order
+        liste=Vector{Int64}()
+        for edge in edges(graphe_tour)
+            push!(liste, parse(Int64,name(nodes(edge)[1])))
+        end
+        #Step 3: Find cost of tour
+        cost=tsp_cost(graphe_tour)
+    else #use RSL
+        #we need to prepare the graph
+        dict_edges=Dict{Node, Vector{Edge}}()
+        for node in nodes(graph)
+            dict_edges[node]=Edge[]
+        end
+        m=0
+        mi=1000000
+        edge_tmp=edges(graph)[1]
+        for edge in edges(graph)
+            push!(dict_edges[nodes(edge)[1]],edge)
+            push!(dict_edges[nodes(edge)[2]],edge)
+            if weight(edge)>m
+                m=weight(edge) 
+            end
+        end
+        arr=Vector{Float64}()
+        for node in nodes(graph)
+            s=0
+            for edge in dict_edges[node]
+                s+=weight(edge)
+            end 
+            s=s/600
+            push!(arr, s)
+        end 
+        #Make sure node minweights are big enough (otherwise Prim will give a false result) 
+        for node in nodes(graph)
+            node.minweight=m*5
+        end
+        #modify edge weights for edges from 0
+        for edge in edges(graph)[1:length(nodes(graph))-1]
+            edge.weight=m+2
+        end 
+        indice=argmax(arr)
+        edges(graph)[indice].weight=m+1
+        
+        #Step1: Find minimal tour 
+        tmp=rsl(graph, nodes(graph)[1])
+        #Step 3: Find cost of tour
+        cost=rsl_graph_weight(graph, tmp)
+        #Step2: Create an array with the order
+        liste=Vector{Int64}()
+        while length(tmp)>0
+            push!(liste, parse(Int64,name(popfirst!(tmp))))
+        end
+    end
+    #Step 4: Write tour
+    if hk
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_mean_tour.txt"
+    else
+        tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_mean_tour.txt"
+    end
+    write_tour(tour_name,liste, cost)
+
+    #Step 5: Reconstruct picture
+    picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
+    if hk
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean "*name(graph)*".png"; view)
+    else
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
+    end
+end 
+
+# ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
+md" Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux." 
+
+# ╔═╡ 3cb5c6f0-3d86-11eb-3dbe-db9dbaca8ae6
+
+
 # ╔═╡ cfe77820-03fb-11eb-0b68-c9f065d0e1d7
 md"*Note : Nous n'arrivons pas à faire fonctionner la macro '@test' dans le carnet Pluto, mais tout fonctionne sans problème dans VS Code.*"
 
@@ -1396,7 +1663,19 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 # ╟─adfc7870-3d7e-11eb-17c7-d76f7140dd2a
 # ╟─1a1785b0-1b68-11eb-0070-8b3453a5c896
 # ╠═38e5bb30-03f6-11eb-332a-7161bc93b80e
-# ╠═84063ae0-1b70-11eb-1407-ff11932e99b6
-# ╠═8e12f4c0-3d7f-11eb-2894-13e7ed1985f1
+# ╟─84063ae0-1b70-11eb-1407-ff11932e99b6
+# ╟─8e12f4c0-3d7f-11eb-2894-13e7ed1985f1
+# ╟─cb920f20-3d7f-11eb-3e9a-3384dc2f11db
+# ╟─0844bc50-3d81-11eb-0e58-edce2d809d75
+# ╠═e779eb3e-3d7f-11eb-3983-379a480d35a9
+# ╠═49e6cc70-3d81-11eb-057c-632b5ec8c846
+# ╠═d6b19590-3d81-11eb-349f-6bea185c1046
+# ╠═2f4763f0-3d83-11eb-19ef-cb3e2696b7a0
+# ╟─42928200-3d83-11eb-3bfa-332178fd2405
+# ╠═d29d4900-3d85-11eb-077b-61cf5ebe96e8
+# ╠═c33c8480-3d85-11eb-1b82-31de9c53481f
+# ╠═82bd6600-3d84-11eb-167f-47a00a1325a4
+# ╟─90c6d7e0-3d84-11eb-302f-2748b11b08fc
+# ╠═3cb5c6f0-3d86-11eb-3dbe-db9dbaca8ae6
 # ╟─cfe77820-03fb-11eb-0b68-c9f065d0e1d7
 # ╠═ec1c0d50-03fe-11eb-21d9-5b465d93cc57
