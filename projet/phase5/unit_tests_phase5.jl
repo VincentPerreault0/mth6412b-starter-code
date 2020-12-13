@@ -30,4 +30,5 @@ g = Graph("Class Example", [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG, nod
 println("testing cost function")
 rsl=rsl(g, nodes(g)[1])
 cost=tsp_cost(tour)
-println(cost)
+@test cost==28
+println("tests complete!")
