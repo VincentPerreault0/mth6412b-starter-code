@@ -117,12 +117,12 @@ function unshred(filename::String, hk::Bool, view::Bool)
     end
 
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_tour.txt"
+    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_tour.txt"
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed "*name(graph)*".png"; view)
+    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
 end 
 
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -186,12 +186,12 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     end
 
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_min_tour.txt"
+    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_min_tour.txt"
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_min "*name(graph)*".png"; view)
+    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
 end 
 
 """fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -265,12 +265,12 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
         end
     end
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_mean_tour.txt"
+    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_mean_tour.txt"
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_mean "*name(graph)*".png"; view)
+    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
 end 
 
 """fonction qui prend en entree le nom d un fichier, et le nombre d'iterations maximale pour 2_opt, decide si on utilise Held et Karp (true) our RSL (false)
@@ -337,10 +337,10 @@ function unshred_2_opt(filename::String, hk::Bool, view::Bool, max_iters:: Int64
     end
 
     #Step 4: Write tour
-    tour_name="projet/phase5/images/solutions/"*name(graph)*"_2opt_tour.txt"
+    tour_name="projet/phase5/images/solutions/"*name(graph)*"_new_2opt_tour.txt"
     write_tour(tour_name,liste, cost)
 
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
-    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_2opt_"*name(graph)*".png"; view)
+    reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_2opt_"*name(graph)*".png"; view)
 end 
