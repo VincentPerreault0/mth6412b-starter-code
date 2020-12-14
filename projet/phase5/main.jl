@@ -14,11 +14,9 @@ for filename in filenames
     #unshred_mean(filename, true, false)
     #unshred_min(filename, true, false)
 end 
-filenames2 = ["../instances/stsp/gr21.tsp"]
+filenames2 = ["projet/phase5/tsp/instances/abstract-light-painting.tsp"]
 for filename in filenames2
     println("on commence l'image ", filename)
     unshred(filename, true, false)
-    unshred_mean(filename, true, false)
-    unshred_min(filename, true, false)
 end 
 println("test complete")

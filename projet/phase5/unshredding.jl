@@ -75,7 +75,7 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 20, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -92,11 +92,15 @@ function unshred(filename::String, hk::Bool, view::Bool)
             push!(dict_nodes[node1],node2)
             push!(dict_nodes[node2],node1)
         end
+        #Ceci marche uniquement si on a bien un tour !
         liste=Vector{Int64}()
         i=1
         node=nodes(graphe_tour)[1]
         node1=nodes(graphe_tour)[1]
         while i<=length(nodes(graphe_tour))
+            show(node)
+            println(dict_nodes[node])
+            println(liste)
             push!(liste, parse(Int64,name(node)))
             node1=dict_nodes[node][1]
             filter(x->name(x)!=name(node), dict_nodes[node1])
@@ -106,7 +110,6 @@ function unshred(filename::String, hk::Bool, view::Bool)
         println(liste)
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
-        println(liste)
     else #use RSL
         #we need to prepare the graph
         m=0
@@ -162,7 +165,7 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 20, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -239,7 +242,7 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 20, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else

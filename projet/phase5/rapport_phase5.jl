@@ -845,9 +845,10 @@ md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruir
 
 # ╔═╡ cb920f20-3d7f-11eb-3e9a-3384dc2f11db
 md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
-Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
+Cet algo prend en entrée le nom d'une image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
 Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
-###### On a ajouté 'new' dans le nom des photos et tours pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
+###### Remarque 1: Les différentes versions de unshred sont identiques si hk=true dans les paramètres. 
+###### Remarque 2: On a ajouté 'new' dans le nom des photos et tours pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
 
 # ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
 md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous avons rendu le poids de toutes les arrêtes partant du noeud 0 plus élevé que le poids de l'arrête la plus la lourde du graphe."
