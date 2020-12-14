@@ -29,7 +29,7 @@ end
 
 """Getting the 2 min edges weight in a graph with node s
     needs at least 2 edges connected to s"""
-function min_weight_edges(graph :: AbstractGraph, s :: AbstractNode)
+function min_weight_edges2(graph :: AbstractGraph, s :: AbstractNode)
     medges = edges(graph)
     edge1 = nothing
     edge2 = nothing
@@ -54,6 +54,31 @@ function min_weight_edges(graph :: AbstractGraph, s :: AbstractNode)
     end
     return [edge1,edge2]
 end
+
+"""Getting the 2 min edges weight in a graph with node s
+    needs at least 2 edges connected to s"""
+function min_weight_edges(graph :: AbstractGraph, s :: AbstractNode)
+    medges = edges(graph)
+    edge1 = nothing
+    edge2 = nothing
+    for i = 1 : length(medges)
+        edgei = medges[i]
+        if (s in(nodes(edgei)) && (nodes(edgei)[1] != nodes(edgei)[2]))
+            if edge1 === nothing
+                edge1 = edgei
+            elseif weight(edgei) <= weight(edge1)
+                edge2 = edge1
+                edge1 = edgei
+            elseif edge2 === nothing
+                edge2 = edgei
+            elseif weight(edgei) <= weight(edge2)
+                edge2 = edgei
+            end
+        end
+    end
+    return [edge1,edge2]
+end
+
 
 """Creating min 1-tree from node s1 and prim algorithm used with s2"""
 function min_one_tree_two_nodes(graph :: AbstractGraph, s1 :: AbstractNode, s2 :: AbstractNode)
@@ -119,9 +144,9 @@ function add_pi_graph!(graph::AbstractGraph, pi::Array)
     for i = 1 : length(g_edges)
         edge_n = get_edge_node_nums(g_edges[i])
         # On vérifie que les numéros sont bien attribués aux sommets
-        if edge_n[1] == 0
-            println("Don't forget to set node numbers")
-        end
+        #if edge_n[1] == 0
+        #    println("Don't forget to set node numbers")
+        #end
         # On ajoute les nouvelles valeurs de pi
         push!(old_weights,weight(g_edges[i]))
         new_weight = weight(g_edges[i]) + pi[edge_n[1]] + pi[edge_n[2]]
@@ -171,7 +196,9 @@ function w_one_trees(graph :: AbstractGraph, pi :: Array, krusk :: Bool, randnod
     for k = 1 : nb_iterations
         # On limite les effets de bords en remettant toutes les
         # valeurs du graphe à 0
-        reset_graph!(graph)
+        if krusk != true
+            reset_graph!(graph)
+        end
 
         # On ajoute les valeurs de pi au poids des edges
         old_weights = add_pi_graph!(graph,pi)
