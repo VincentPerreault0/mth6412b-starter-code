@@ -11,7 +11,7 @@ function tsp_cost(tour::AbstractGraph)
     return(cost)
 end 
 
-"""Ne fonctionne pas, a terminer"""
+"""Ne fonctionne pas !"""
 function two_opt(graph::AbstractGraph, q::Vector{Node{T}}, iters_max:: Int64) where T 
     dist=zeros(Float64, 601,601)
     #creation des distances 
@@ -75,7 +75,7 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -144,7 +144,7 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -221,7 +221,7 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -308,7 +308,7 @@ function unshred_2_opt(filename::String, hk::Bool, view::Bool, max_iters:: Int64
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
