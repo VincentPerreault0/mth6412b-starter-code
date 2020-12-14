@@ -825,8 +825,14 @@ md"Nous cachons également ici les algorithmes de Prim, de Rosenkrantz, Stearns 
 # ╔═╡ adfc7870-3d7e-11eb-17c7-d76f7140dd2a
 md" Nous pouvons maintenant expliquer le travail effectué dans la phase 5 et présenter les différentes fontions implémentées."
 
+# ╔═╡ 863e2a70-3e57-11eb-2bf4-0bbc12618312
+md" ### Nouvelles fonctions "
+
 # ╔═╡ 1a1785b0-1b68-11eb-0070-8b3453a5c896
 md"Nous avons en premier implementé une fonction tour__cost qui renvoie la somme des coûts des arrêtes d'un tour. Cette fonction est testée dans le fichier unit_ _tests_phase5.jl sur l'exemple donné en cours."
+
+# ╔═╡ aa712232-3e57-11eb-2355-5710f0658f9f
+md" ### Fonction tsp__ cost"
 
 # ╔═╡ 38e5bb30-03f6-11eb-332a-7161bc93b80e
 begin
@@ -843,6 +849,9 @@ end
 # ╔═╡ 84063ae0-1b70-11eb-1407-ff11932e99b6
 md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruire des images 'déchiquetées' à l'aide des fonctions présentent dans le fichier tools,jl. Nous allons en premier introduire ces fonctions en les cachant." 
 
+# ╔═╡ 9f697ea0-3e57-11eb-0017-13e1d8ba3893
+md" ### Fonction unshred"
+
 # ╔═╡ cb920f20-3d7f-11eb-3e9a-3384dc2f11db
 md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
 Cet algo prend en entrée le nom d'une image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
@@ -858,20 +867,27 @@ md"##### Remarque:
 Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
 
 
+# ╔═╡ bb4dd850-3e57-11eb-029c-cf263fbcd15a
+md" ### Fonction unshred__ min"
+
 # ╔═╡ d6b19590-3d81-11eb-349f-6bea185c1046
-md"Nous avons voulu améliorer le rendu de la fonction unshred (notamment pour RSL). Nous nous sommes rendu compte que les images étaient bien reconstruite à part une coupure dans l'image reconstruire qui correspondait souvent à un des bords de l'image. Dans un premier temps, on a voulu s'assurer que l'arrête de poids minimum était bien dans le graphe. En effet, avec le noeud 0 et tous les arcs sortant de 0 avec le même poids, l'algorithme prenait toujours comme source le noeud 1. On a changé ceci en forcant l'algorithme à aller visiter un des noeuds de l'arc à poids minimum. Nous avons donc implémenté la fonction unshred_min qui prend en entrée les mêmes paramètres, qui renvoient un tour et une image reconstruite mais avec la spécificité de visiter l'arc à poids minimal." 
+md"Nous avons voulu améliorer le rendu de la fonction unshred (notamment pour RSL). Nous nous sommes rendu compte que les images étaient bien reconstruite à part une 'coupure' dans l'image reconstruite. Cette 'coupure' correspondait souvent à un des bords de l'image.
+Dans un premier temps, on a voulu s'assurer que l'arrête de poids minimum était bien dans le graphe. En effet, avec le noeud 0 et tous les arcs sortant de 0 ayant le même poids, l'algorithme prenait toujours comme source le noeud 1. On a changé ceci en forcant l'algorithme à aller visiter un des noeuds de l'arc à poids minimum. Nous avons donc implémenté la fonction unshred_min qui prend en entrée les mêmes paramètres, qui renvoient un tour et une image reconstruite mais avec la spécificité de visiter l'arc à poids minimal." 
 
 # ╔═╡ 42928200-3d83-11eb-3bfa-332178fd2405
 md"Nous nous sommes rendu compte que cette technique n'améliorait pas toujours le résultat donné. De plus, elle ne remédiait pas à la coupure en milieu de l'image."
 
+# ╔═╡ d7451dc0-3e57-11eb-04e7-dde82a1fe8f4
+md"### Fonction unshred_mean"
+
 # ╔═╡ d29d4900-3d85-11eb-077b-61cf5ebe96e8
-md"Nous avons en premier voulu trouver l'arrête la plus lourde utilisée dans le tour. Logiquement cette arrête devrait être prêt de la coupure. Nous avons implémenté un algorithme qui décale toute l'image vers la droite jusqu'à ce que la colonne après l'arrête la plus longue soit première dans le tour. De même, nous avons essayé de calculer la différence de poids entre les arrêtes consécutive. Nous avons implémenté un algorithme qui décale l'image vers la droite pour que l'arrête avec la différence de poids la plus élevée se retrouve en début de tour. Nous ne mettons pas les algortimes pour ces deux fonctions ici parce qu'ils n'ont pas donné de bons résultats. On se retouvait souvent avec deux coupures plutôt qu'une. "
+md"Nous avons en premier voulu trouver l'arrête la plus lourde utilisée dans le tour. Logiquement cette arrête devrait être prêt de la coupure. Nous avons implémenté un algorithme qui décale toute l'image vers la droite jusqu'à ce que la colonne après l'arrête la plus longue soit première dans le tour. De même, nous avons essayé de calculer la différence de poids entre les arrêtes consécutive. Nous avons implémenté un algorithme qui décale l'image vers la droite pour que l'arrête avec la différence de poids la plus élevée se retrouve en début de tour. Nous ne mettons pas les algortimes pour ces deux fonctions ici parce qu'ils n'ont pas donné de bons résultats. On se retouvait souvent avec deux 'coupures' en milieu d'image plutôt qu'une. "
 
 # ╔═╡ c33c8480-3d85-11eb-1b82-31de9c53481f
 md"Nous avons alors eu le raisonnement suivant. Les colonnes du bord doivent, en moyenne, être plus différentes de l'ensemble des autres colonnes, que les colonnes en milieu de photo. Nous avons donc implémenté la fonction unshred__ mean qui, de la même manière que unshred_min, force l'algorithme de tournée minimale à commencer par le noeud le plus éloigné en moyenne de tous les autres noeuds. Cet algorithme a souvent amélioré le résultat obtenu, ou a du moins décalé les coupures vers les bors des images."
 
 # ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
-md"Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux."
+md"Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux. En effet, nos structures de données n'étaient pas adaptées à la représentation d'un tour hamiltonien avec des indices entre noeuds consécutifs (lors des changements d'indice, le sens de lecture des noeuds peut changer et ceci rend le code plus difficile)."
 
 # ╔═╡ 8ce8c670-3d9c-11eb-1166-9fd188a544ef
 md" ### Résultats: 
@@ -879,7 +895,7 @@ Nous allons maintenant présenter les résultats des algorithmes, ainsi que les 
 
 # ╔═╡ 88413430-3d98-11eb-1da1-cf95185813b4
 md"#### Image abstract light painting
-Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont effectués avec RSL.
 La meilleure image trouvée est l'image de l'algorithme unshred_min, qui semble identique à l'originale. Nous avons mis les images des deux autres algorithmes pour indication."
 
 # ╔═╡ 0caa3b80-3d90-11eb-04c2-a32700d33403
@@ -894,7 +910,7 @@ end
 
 # ╔═╡ 07c36a70-3d99-11eb-1dc1-cf865d9dde7d
 md"#### Image alaska railroad
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min, même si toutes les images sont inversées. L'image données par unshred_min a la plus petite coupure en deux. Nous avons mis les images des deux autres algorithmes pour indication."
+Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont effectuées avec RSL. La meilleure image trouvée est l'image de l'algorithme unshred__ min, même si toutes les images sont inversées. L'image données par unshred_min a la plus petite coupure en deux. Nous avons mis les images des deux autres algorithmes pour indication."
 
 # ╔═╡ 0ca83fb0-3d90-11eb-1492-d969b1923c3f
 begin
@@ -908,7 +924,7 @@ end
 
 # ╔═╡ 0ca5f5c0-3d90-11eb-1036-bf524ca6f20c
 md"#### Image Blue hour Paris 
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image comme unshred__ mean donne une image non inversée, mais finalement le coût du tour dans unshred__ min est plus faible (unshred__ min : 4.210692e6 contre 4.264599e6 pour unshred__ mean). Nous avons mis les images des deux autres algorithmes pour indication."
+Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont faits avec RSL. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image comme unshred__ mean donne une image non inversée, mais finalement le coût du tour dans unshred__ min est plus faible (unshred__ min : 4.210692e6 contre 4.264599e6 pour unshred__ mean). Nous avons mis les images des deux autres algorithmes pour indication."
 
 # ╔═╡ 0ca24c40-3d90-11eb-1afa-99103556f46a
 begin
@@ -922,7 +938,7 @@ end
 
 # ╔═╡ 0ca02960-3d90-11eb-2bbf-99ab05bf402e
 md"#### Image lower kananaskis lake
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Encore une fois, nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image. Le score de unshred__ min reste meilleur. 
+Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont faits avec RSL. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Encore une fois, nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image. Le score de unshred__ min reste meilleur. 
 Nous avons mis les images des deux autres algorithmes pour indication."
 
 # ╔═╡ c04aaf2e-3d9a-11eb-1016-f354cda5b67c
@@ -937,8 +953,8 @@ end
 
 # ╔═╡ 6b9c4240-3d9b-11eb-1176-333e0fce5492
 md"#### Image marlet2 radio board
-Ceci est peut-être l'image la plus difficile à reconstruire. Pour les images suivantes, tous les tours sont longs de 601 noeuds.
-La meilleure image trouvée est l'image de l'algorithme unshred__ mean.Nous avons hésité entre unshred__ mean et unshred pour la meilleure image. Le score de unshred__ mean est légérement meilleur (9.362476e6 pour unshred__ mean contre 9.369582e6 pour unshred). 
+Ceci est peut-être l'image la plus difficile à reconstruire. Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont faits avec RSL.
+La meilleure image trouvée est l'image de l'algorithme unshred__ mean.Nous avons hésité entre unshred__ mean et unshred pour la meilleure image. Le score de unshred__ mean est légérement meilleur (9.362476e6 pour unshred__ mean contre 9.369582e6 pour unshred). Par conte, on estime qu'à l'oeil nu on remarque moins les défauts dans l'image rendue par unshred.
 Nous avons mis les images des deux autres algorithmes pour indication."
 
 # ╔═╡ c11053b0-3d9b-11eb-21d8-a7d6271cde98
@@ -954,7 +970,7 @@ end
 
 # ╔═╡ b1cf08a0-3d9c-11eb-048a-a7a26b755ca4
 md"#### Image nikos cat
- Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+ Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont faits avec RSL.
 La meilleure image trouvée est l'image de l'algorithme unshred__ mean qui semble identique à l'originale. 
 Nous avons mis les images des deux autres algorithmes pour indication."
 
@@ -970,7 +986,7 @@ end
 
 # ╔═╡ 5c544b00-3d9d-11eb-330e-5b5d56e81dab
 md"#### Image pizza food wallpaper
-Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+Pour les images suivantes, tous les tours sont longs de 601 noeuds et sont fait avec RSL.
 La meilleure image trouvée est l'image de l'algorithme unshred, même si elle est inversée par rapport à l'originale. Les deux autres algortihmes donnent une image avec une coupure relativement abrupte.
 Nous avons mis les images des deux autres algorithmes pour indication."
 
@@ -986,7 +1002,7 @@ end
 
 # ╔═╡ cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
 md"#### Image the enchanted garden
-Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0) et sont faits avec RSL.
 La meilleure image trouvée est l'image de l'algorithme unshred_mean, même si elle est inversée par rapport à l'originale.
 Nous avons mis les images des deux autres algorithmes pour indication."
 
@@ -1002,7 +1018,7 @@ end
 
 # ╔═╡ 5d699620-3d9e-11eb-0a05-f9c603ab3a6d
 md"#### Image tokyo skytree aerial
-Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0) et sont faits avec RSL.
 La meilleure image trouvée est l'image de l'algorithme unshred. Les 3 images produites ne donnent pas de résultats satisfaisants. 
 Nous avons mis les images des deux autres algorithmes pour indication."
 
@@ -1971,9 +1987,6 @@ md"#### Interprétation des résultats"
 # ╔═╡ b8a575a0-3e4c-11eb-0836-092cb6f1b34a
 md"Afin d'utiliser les résultats précédents de manière pertinente, il est crucial de comprendre le fonctionnement de Held Karp et quelles sont les fonctions pour lesquelles il est le plus important d'améliorer les résultats."
 
-# ╔═╡ bf430850-3e4c-11eb-3ee6-ed8c7b588004
-md"Afin d'utiliser les résultats précédents de manière pertinente, il est crucial de comprendre le fonctionnement de Held Karp et quelles sont les fonctions pour lesquelles il est le plus important d'améliorer les résultats."
-
 # ╔═╡ c3d07fb0-3e4c-11eb-1d1a-7bf2b3eee17d
 md"La fonction w\_one\_trees a une boucle principale qui appelle elle même 3 fonctions principales : add\_pi\_graph, min\_one\_tree et sub\_pi\_graph. Là encore, mis à part ces 3 fonctions w\_one\_trees peut difficilement être améliorée."
 
@@ -2007,7 +2020,10 @@ md"Une alternative à l'optimisation de Held Karp est d'utiliser des ordinateurs
 md"Nous avons donc testé l'algortihme de Held Karp sur le graphe gr21 qui nous donne un résultat en 5 secondes au lieu de 10 secondes sur ma machine personnelle, donc un gain de temps de 50%."
 
 # ╔═╡ 093404a0-3e4d-11eb-3f5a-55516758e43e
-md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes sur un des graphes proposés pour la phase 5. Il faut donc plus d'une heure pour 100 itérations en théorie et en pratique même après 2h l'algorithme n'a pas effectué 100 itérations (il s'avère après vérifications que le temps d'une itération augmente au fur et à mesure, par exemple l'itération 50 dure plus de 10 minutes). De plus, d'après les résultats de la phase 4, avec notre implémentation, Held Karp semble donner des résultats concluants entre 1000 et 10000 itérations soit entre 16 et 160h d'éxecution sur les machines de l'école en théorie (nombre qui semble devoir être revu à la hausse avec les résultats vus précédemment). Nous n'avons pas réussi à lancer une éxecution aussi longue mais d'après les résultats de RSL qui semblaient concluants, avec suffisamment de temps on pourrait avoir une reconstitution parfaite d'une image avec Held Karp. Par ailleurs, avec un nombre trop petit d'itérations, l'algorithme ne donne pas de résultats suffisants pour recréer un tour avec la fonction correct\_one\_tree."
+md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes sur un des graphes proposés pour la phase 5. Il faut donc plus d'une heure pour 100 itérations en théorie et en pratique même après 2h l'algorithme n'a pas effectué 100 itérations (il s'avère après vérifications que le temps d'une itération augmente au fur et à mesure, par exemple l'itération 50 dure plus de 10 minutes). De plus, d'après les résultats de la phase 4, avec notre implémentation, Held Karp semble donner des résultats concluants entre 1000 et 10000 itérations soit entre 16 et 160h d'éxecution sur les machines de l'école en théorie (nombre qui semble devoir être revu à la hausse avec les résultats vus précédemment). Or, on est automatiquement déconnectés des machines de l'école après 8h et nos calculs ont été coupés avant leur finition. Nous n'avons donc pas réussi à lancer une éxecution aussi longue mais d'après les résultats de RSL qui semblaient concluants, avec suffisamment de temps on pourrait avoir une reconstitution parfaite d'une image avec Held Karp. Par ailleurs, avec un nombre trop petit d'itérations, l'algorithme ne donne pas de résultats suffisants pour recréer un tour avec la fonction correct\_one\_tree."
+
+# ╔═╡ 82c30610-3e5a-11eb-36a4-b3d1bb7d2644
+md"### FIN" 
 
 # ╔═╡ Cell order:
 # ╟─5306c162-03f3-11eb-3b80-3577af92365c
@@ -2017,17 +2033,22 @@ md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes
 # ╟─0e058062-3d7d-11eb-1c2f-35bf63936a6b
 # ╟─22c11e60-3d7d-11eb-3143-ad73b73d5a59
 # ╟─adfc7870-3d7e-11eb-17c7-d76f7140dd2a
+# ╟─863e2a70-3e57-11eb-2bf4-0bbc12618312
 # ╟─1a1785b0-1b68-11eb-0070-8b3453a5c896
+# ╟─aa712232-3e57-11eb-2355-5710f0658f9f
 # ╠═38e5bb30-03f6-11eb-332a-7161bc93b80e
 # ╟─84063ae0-1b70-11eb-1407-ff11932e99b6
 # ╟─8e12f4c0-3d7f-11eb-2894-13e7ed1985f1
+# ╟─9f697ea0-3e57-11eb-0017-13e1d8ba3893
 # ╟─cb920f20-3d7f-11eb-3e9a-3384dc2f11db
 # ╟─0844bc50-3d81-11eb-0e58-edce2d809d75
 # ╠═e779eb3e-3d7f-11eb-3983-379a480d35a9
 # ╟─49e6cc70-3d81-11eb-057c-632b5ec8c846
+# ╟─bb4dd850-3e57-11eb-029c-cf263fbcd15a
 # ╟─d6b19590-3d81-11eb-349f-6bea185c1046
 # ╠═2f4763f0-3d83-11eb-19ef-cb3e2696b7a0
 # ╟─42928200-3d83-11eb-3bfa-332178fd2405
+# ╟─d7451dc0-3e57-11eb-04e7-dde82a1fe8f4
 # ╟─d29d4900-3d85-11eb-077b-61cf5ebe96e8
 # ╟─c33c8480-3d85-11eb-1b82-31de9c53481f
 # ╠═82bd6600-3d84-11eb-167f-47a00a1325a4
@@ -2051,7 +2072,7 @@ md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes
 # ╟─cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
 # ╟─cd7c0930-3d9d-11eb-2326-198d8bf4fbda
 # ╟─5d699620-3d9e-11eb-0a05-f9c603ab3a6d
-# ╠═6652785e-3d9e-11eb-39a6-1f15754d9664
+# ╟─6652785e-3d9e-11eb-39a6-1f15754d9664
 # ╟─f1cea170-3d9e-11eb-3e52-41511958432e
 # ╟─82af7be2-3e4b-11eb-1d4a-c317530fc377
 # ╟─895af140-3e4b-11eb-0378-9310f3a64db3
@@ -2064,7 +2085,6 @@ md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes
 # ╠═9f7df200-3e4c-11eb-1605-9713851b02f1
 # ╟─b235f7d0-3e4c-11eb-0ebf-696aab618714
 # ╟─b8a575a0-3e4c-11eb-0836-092cb6f1b34a
-# ╟─bf430850-3e4c-11eb-3ee6-ed8c7b588004
 # ╟─c3d07fb0-3e4c-11eb-1d1a-7bf2b3eee17d
 # ╟─ca669850-3e4c-11eb-16ab-43dde517ae6e
 # ╟─d1426c7e-3e4c-11eb-0a83-1db87ffbb917
@@ -2076,3 +2096,4 @@ md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes
 # ╟─feb82650-3e4c-11eb-3a6c-6f73e71c43e0
 # ╟─03ffc5f0-3e4d-11eb-20c8-dd186d53a35d
 # ╟─093404a0-3e4d-11eb-3f5a-55516758e43e
+# ╟─82c30610-3e5a-11eb-36a4-b3d1bb7d2644

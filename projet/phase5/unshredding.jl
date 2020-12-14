@@ -92,18 +92,23 @@ function unshred(filename::String, hk::Bool, view::Bool)
             push!(dict_nodes[node1],node2)
             push!(dict_nodes[node2],node1)
         end
+        tmp=nodes(graphe_tour)[1]
+        for node in nodes(graph_tour)
+            if length(dict_nodes[node])!=2
+                println(dict_nodes[node])
+                tmp=node
+            end
+        end 
+        println("fin if")
         #Ceci marche uniquement si on a bien un tour !
         liste=Vector{Int64}()
         i=1
-        node=nodes(graphe_tour)[1]
-        node1=nodes(graphe_tour)[1]
+        node=tmp
+        node1=tmp
         while i<=length(nodes(graphe_tour))
-            show(node)
-            println(dict_nodes[node])
-            println(liste)
             push!(liste, parse(Int64,name(node)))
             node1=dict_nodes[node][1]
-            filter(x->name(x)!=name(node), dict_nodes[node1])
+            filter(x->name(x)==name(node), dict_nodes[node1])
             node=node1
             i+=1
         end
