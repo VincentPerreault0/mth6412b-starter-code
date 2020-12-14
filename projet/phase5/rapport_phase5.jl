@@ -797,13 +797,22 @@ begin
 		view && imshow(reconstructed_picture)
 		save(output_name, reconstructed_picture)
 	end
+	image=load("images/solutions/reconstructed_new abstract-light-painting.png")
+	imshow(image)
 end
+
+# ╔═╡ 41345f50-3d88-11eb-27c3-cd012a33c590
+begin 
+	using Pkg
+	Pkg.add("TestImages")
+	Pkg.add("GtkReactive")
+end 
 
 # ╔═╡ 5306c162-03f3-11eb-3b80-3577af92365c
 md"# Rapport du projet d'Implémentation d'algo. de rech. opérationnelle
 ## Phase 5 : 14/12/2020
 Antonin Kenens, Vincent Perreault et Laura Kolcheva
-Dépôt github à l'adresse suivante :
+Dépôt github à l'adresse suivante: https://github.com/VincentPerreault0/mth6412b-starter-code/tree/phase5
 "
 
 # ╔═╡ 74929e92-3d86-11eb-2bef-271e790eab88
@@ -1457,14 +1466,15 @@ function unshred(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_"*name(graph)*".png"; view)
     end
 end 
 
 # ╔═╡ 49e6cc70-3d81-11eb-057c-632b5ec8c846
-md" Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
+md"##### Remarque:
+Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
 
 
 # ╔═╡ d6b19590-3d81-11eb-349f-6bea185c1046
@@ -1542,9 +1552,9 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min_"*name(graph)*".png"; view)
     end 
 end 
 
@@ -1639,26 +1649,162 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean_"*name(graph)*".png"; view)
     end
 end 
 
 # ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
-md" Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux." 
+md"Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux."
 
-# ╔═╡ 4136f762-3d88-11eb-2101-d54b19d42742
-imshow("images/solutions/reconstructed_new abstract-light-painting.png")
+# ╔═╡ 8ce8c670-3d9c-11eb-1166-9fd188a544ef
+md" ### Résultats: 
+Nous allons maintenant présenter les résultats des algorithmes, ainsi que les meilleurs solutions selon nous. Il faut tout d'abbord importer certains packages." 
 
-# ╔═╡ 41345f50-3d88-11eb-27c3-cd012a33c590
+# ╔═╡ 88413430-3d98-11eb-1da1-cf95185813b4
+md"#### Image abstract light painting
+Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred_min, qui semble identique à l'originale. Nous avons mis les images des deux autres algorithmes pour indication."
 
+# ╔═╡ 0caa3b80-3d90-11eb-04c2-a32700d33403
+begin
+	img0=[load("../phase5/images/original/abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_min_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_mean_abstract-light-painting.png")] 
+	p0=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p0[i], img0[i])
+	end
+	p0
+end
 
-# ╔═╡ cfe77820-03fb-11eb-0b68-c9f065d0e1d7
-md"*Note : Nous n'arrivons pas à faire fonctionner la macro '@test' dans le carnet Pluto, mais tout fonctionne sans problème dans VS Code.*"
+# ╔═╡ 07c36a70-3d99-11eb-1dc1-cf865d9dde7d
+md"#### Image alaska railroad
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min, même si toutes les images sont inversées. L'image données par unshred_min a la plus petite coupure en deux. Nous avons mis les images des deux autres algorithmes pour indication."
 
-# ╔═╡ ec1c0d50-03fe-11eb-21d9-5b465d93cc57
-md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire fonctionner le code.*"
+# ╔═╡ 0ca83fb0-3d90-11eb-1492-d969b1923c3f
+begin
+	img1=[load("../phase5/images/original/alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_min_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_mean_alaska-railroad.png")] 
+	p1=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p1[i], img1[i])
+	end
+	p1
+end
+
+# ╔═╡ 0ca5f5c0-3d90-11eb-1036-bf524ca6f20c
+md"#### Image Blue hour Paris 
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image comme unshred__ mean donne une image non inversée, mais finalement le coût du tour dans unshred__ min est plus faible (unshred__ min : 4.210692e6 contre 4.264599e6 pour unshred__ mean). Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 0ca24c40-3d90-11eb-1afa-99103556f46a
+begin
+	img2=[load("../phase5/images/original/blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_min_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_mean_blue-hour-paris.png")] 
+	p2=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p2[i], img2[i])
+	end
+	p2
+end
+
+# ╔═╡ 0ca02960-3d90-11eb-2bbf-99ab05bf402e
+md"#### Image lower kananaskis lake
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Encore une fois, nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image. Le score de unshred__ min reste meilleur. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ c04aaf2e-3d9a-11eb-1016-f354cda5b67c
+begin
+	img3=[load("../phase5/images/original/lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_min_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_mean_lower-kananaskis-lake.png")] 
+	p3=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p3[i], img3[i])
+	end
+	p3
+end
+
+# ╔═╡ 6b9c4240-3d9b-11eb-1176-333e0fce5492
+md"#### Image marlet2 radio board
+Ceci est peut-être l'image la plus difficile à reconstruire. Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred__ mean.Nous avons hésité entre unshred__ mean et unshred pour la meilleure image. Le score de unshred__ mean est légérement meilleur (9.362476e6 pour unshred__ mean contre 9.369582e6 pour unshred). 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ c11053b0-3d9b-11eb-21d8-a7d6271cde98
+
+begin
+	img4=[load("../phase5/images/original/marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_mean_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_min_marlet2-radio-board.png")] 
+	p4=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred" "unshred_min"])
+	for i in 1:4
+		plot!(p4[i], img4[i])
+	end
+	p4
+end
+
+# ╔═╡ b1cf08a0-3d9c-11eb-048a-a7a26b755ca4
+md"#### Image nikos cat
+ Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred__ mean qui semble identique à l'originale. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ b27d981e-3d9c-11eb-3968-7b5936c83035
+begin
+	img5=[load("../phase5/images/original/nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_mean_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_min_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_nikos-cat.png")] 
+	p5=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
+	for i in 1:4
+		plot!(p5[i], img5[i])
+	end
+	p5
+end
+
+# ╔═╡ 5c544b00-3d9d-11eb-330e-5b5d56e81dab
+md"#### Image pizza food wallpaper
+Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred, même si elle est inversée par rapport à l'originale. Les deux autres algortihmes donnent une image avec une coupure relativement abrupte.
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 51b63eb0-3d9d-11eb-3f9f-bb2ba196a519
+begin
+	img6=[load("../phase5/images/original/pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_min_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_mean_pizza-food-wallpaper.png")] 
+	p6=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_min" "unshred_mean"])
+	for i in 1:4
+		plot!(p6[i], img6[i])
+	end
+	p6
+end
+
+# ╔═╡ cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
+md"#### Image the enchanted garden
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+La meilleure image trouvée est l'image de l'algorithme unshred_mean, même si elle est inversée par rapport à l'originale.
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ cd7c0930-3d9d-11eb-2326-198d8bf4fbda
+begin
+	img7=[load("../phase5/images/original/the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_mean_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_min_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_the-enchanted-garden.png")] 
+	p7=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
+	for i in 1:4
+		plot!(p7[i], img7[i])
+	end
+	p7
+end
+
+# ╔═╡ 5d699620-3d9e-11eb-0a05-f9c603ab3a6d
+md"#### Image tokyo skytree aerial
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+La meilleure image trouvée est l'image de l'algorithme unshred. Les 3 images produites ne donnent pas de résultats satisfaisants. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 6652785e-3d9e-11eb-39a6-1f15754d9664
+begin
+	img8=[load("../phase5/images/original/tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_mean_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_min_tokyo-skytree-aerial.png")] 
+	p8=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_mean" "unshred_min"])
+	for i in 1:4
+		plot!(p8[i], img8[i])
+	end
+	p8
+end
+
+# ╔═╡ f1cea170-3d9e-11eb-3e52-41511958432e
+md"#### En conclusion
+L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ mean se comporte le mieux pour 3 images sur 9 et finalement unshred se comporte le mieux pour 2 images. "
+
 
 # ╔═╡ Cell order:
 # ╟─5306c162-03f3-11eb-3b80-3577af92365c
@@ -1683,7 +1829,24 @@ md"*Note : Le filepath a dû être ajouté sur le carnet Pluto pour faire foncti
 # ╟─c33c8480-3d85-11eb-1b82-31de9c53481f
 # ╠═82bd6600-3d84-11eb-167f-47a00a1325a4
 # ╟─90c6d7e0-3d84-11eb-302f-2748b11b08fc
-# ╠═4136f762-3d88-11eb-2101-d54b19d42742
+# ╟─8ce8c670-3d9c-11eb-1166-9fd188a544ef
 # ╠═41345f50-3d88-11eb-27c3-cd012a33c590
-# ╟─cfe77820-03fb-11eb-0b68-c9f065d0e1d7
-# ╠═ec1c0d50-03fe-11eb-21d9-5b465d93cc57
+# ╟─88413430-3d98-11eb-1da1-cf95185813b4
+# ╟─0caa3b80-3d90-11eb-04c2-a32700d33403
+# ╟─07c36a70-3d99-11eb-1dc1-cf865d9dde7d
+# ╟─0ca83fb0-3d90-11eb-1492-d969b1923c3f
+# ╟─0ca5f5c0-3d90-11eb-1036-bf524ca6f20c
+# ╟─0ca24c40-3d90-11eb-1afa-99103556f46a
+# ╟─0ca02960-3d90-11eb-2bbf-99ab05bf402e
+# ╟─c04aaf2e-3d9a-11eb-1016-f354cda5b67c
+# ╟─6b9c4240-3d9b-11eb-1176-333e0fce5492
+# ╟─c11053b0-3d9b-11eb-21d8-a7d6271cde98
+# ╟─b1cf08a0-3d9c-11eb-048a-a7a26b755ca4
+# ╟─b27d981e-3d9c-11eb-3968-7b5936c83035
+# ╟─5c544b00-3d9d-11eb-330e-5b5d56e81dab
+# ╟─51b63eb0-3d9d-11eb-3f9f-bb2ba196a519
+# ╟─cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
+# ╟─cd7c0930-3d9d-11eb-2326-198d8bf4fbda
+# ╟─5d699620-3d9e-11eb-0a05-f9c603ab3a6d
+# ╠═6652785e-3d9e-11eb-39a6-1f15754d9664
+# ╟─f1cea170-3d9e-11eb-3e52-41511958432e
