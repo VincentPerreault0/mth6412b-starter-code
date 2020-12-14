@@ -22,8 +22,8 @@ println("time subgraph :")
 println("time min weight edges :")
 @time min_weight_edges(graph,randnode)
 
-println("time min_weight_edges2 :")
-@time min_weight_edges2(graph,randnode)
+#println("time min_weight_edges2 :")
+#@time min_weight_edges2(graph,randnode)
 
 println("time set_node_numbers :")
 @time set_node_numbers!(graph)
