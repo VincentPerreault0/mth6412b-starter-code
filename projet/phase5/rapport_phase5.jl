@@ -797,8 +797,6 @@ begin
 		view && imshow(reconstructed_picture)
 		save(output_name, reconstructed_picture)
 	end
-	image=load("images/solutions/reconstructed_new abstract-light-painting.png")
-	imshow(image)
 end
 
 # ╔═╡ 41345f50-3d88-11eb-27c3-cd012a33c590
@@ -1803,7 +1801,8 @@ end
 
 # ╔═╡ f1cea170-3d9e-11eb-3e52-41511958432e
 md"#### En conclusion
-L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ mean se comporte le mieux pour 3 images sur 9 et finalement unshred se comporte le mieux pour 2 images. "
+L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ mean se comporte le mieux pour 3 images sur 9 et finalement unshred se comporte le mieux pour 2 images.Tous ces résultats ont été obtenus avec RSL et non Held et Karp. 
+L'algorithme de Held et Karp converge, mais trop lentement. "
 
 
 # ╔═╡ Cell order:
