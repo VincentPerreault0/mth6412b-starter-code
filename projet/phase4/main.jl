@@ -34,7 +34,9 @@ filenames3 = ["instances/stsp/bayg29.tsp",
               "instances/stsp/pa561.tsp",
               "instances/stsp/swiss42.tsp"]
 
-for filename in filenames
+filenamegr21 = ["instances/stsp/gr21.tsp"]
+
+for filename in filenamegr21
   graph = create_graph_from_stsp_file(filename, false)
   println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
 
@@ -42,8 +44,8 @@ for filename in filenames
   
   pi_mg = zeros(nb_nodes(graph))
 
-  #tree_graph, max_wk = max_w(graph, 1.0, 10000, pi_mg, true, false)
-  tree_graph, max_wk = max_w_lk(graph, 1.0, 1000, pi_mg, true, false)
+  @time tree_graph, max_wk = max_w(graph, 0.1, 10000, pi_mg, true, false)
+  #tree_graph, max_wk = max_w_lk(graph, 1.0, 1000, pi_mg, true, false)
   
   # Fonction get_tour ajoutée après heure limite
   println(max_wk)

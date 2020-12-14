@@ -58,6 +58,8 @@ println("subgraph ok")
 
 @test min_weight_edges(graph2,node1)==[edge1g,edge6g] || min_weight_edges(graph2,node1)==[edge6g,edge1g]
 @test min_weight_edges(g,nodeB)==[edge1,edge2] || min_weight_edges(g,nodeB)==[edge2,edge1]
+@test min_weight_edges2(graph2,node1)==[edge1g,edge6g] || min_weight_edges2(graph2,node1)==[edge6g,edge1g]
+@test min_weight_edges2(g,nodeB)==[edge1,edge2] || min_weight_edges2(g,nodeB)==[edge2,edge1]
 
 println("min_weight_edges ok")
 
