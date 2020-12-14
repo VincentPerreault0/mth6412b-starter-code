@@ -11,8 +11,8 @@ filenames = ["projet/phase5/tsp/instances/abstract-light-painting.tsp",
 for filename in filenames
     println("on commence l'image ", filename)
     unshred(filename, true, false)
-    unshred_mean(filename, true, false)
-    unshred_min(filename, true, false)
+    #unshred_mean(filename, true, false)
+    #unshred_min(filename, true, false)
 end 
 filename="projet/phase5/tsp/instances/abstract-light-painting.tsp"
 #println("debut hk normal")
