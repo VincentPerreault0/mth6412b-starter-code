@@ -101,7 +101,7 @@ end
 function reset_node!(node::AbstractNode)
   node.rank = 0
   node.parent = nothing
-  node.minweight = 10000
+  node.minweight = 100000
 end
 
 """Donne un numéro à un node"""
