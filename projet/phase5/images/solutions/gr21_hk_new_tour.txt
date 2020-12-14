@@ -1,0 +1,28 @@
+NAME : projet/phase5/images/solutions/gr21_hk_new_tour.txt
+COMMENT : LENGHT = 2553.0
+TYPE : TOUR
+DIMENSION : 21
+TOUR_SECTION
+1
+12
+6
+16
+6
+16
+6
+16
+6
+16
+6
+16
+6
+16
+6
+16
+6
+16
+6
+16
+6
+-1
+EOF

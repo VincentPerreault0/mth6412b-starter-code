@@ -822,6 +822,276 @@ md"Nous mettons et cachons ici les méthodes très longues liées aux types de d
 # ╔═╡ 0e058062-3d7d-11eb-1c2f-35bf63936a6b
 md"Nous cachons également ici les algorithmes de Prim, de Rosenkrantz, Stearns et Lewis, de Kruskal et de Held et Karp introduits dans les phases précédentes."
 
+# ╔═╡ adfc7870-3d7e-11eb-17c7-d76f7140dd2a
+md" Nous pouvons maintenant expliquer le travail effectué dans la phase 5 et présenter les différentes fontions implémentées."
+
+# ╔═╡ 1a1785b0-1b68-11eb-0070-8b3453a5c896
+md"Nous avons en premier implementé une fonction tour__cost qui renvoie la somme des coûts des arrêtes d'un tour. Cette fonction est testée dans le fichier unit_ _tests_phase5.jl sur l'exemple donné en cours."
+
+# ╔═╡ 38e5bb30-03f6-11eb-332a-7161bc93b80e
+begin
+	""" fonction qui calcule le cout d un tour"""
+	function tsp_cost(tour::AbstractGraph)
+		cost=0
+		for edge in edges(tour)
+			cost+=weight(edge)
+		end
+		return(cost)
+	end 
+end
+
+# ╔═╡ 84063ae0-1b70-11eb-1407-ff11932e99b6
+md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruire des images 'déchiquetées' à l'aide des fonctions présentent dans le fichier tools,jl. Nous allons en premier introduire ces fonctions en les cachant." 
+
+# ╔═╡ cb920f20-3d7f-11eb-3e9a-3384dc2f11db
+md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
+Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
+Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
+###### On a ajouté 'new' dans le nom des photos et tours pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
+
+# ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
+md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous avons rendu le poids de toutes les arrêtes partant du noeud 0 plus élevé que le poids de l'arrête la plus la lourde du graphe."
+
+# ╔═╡ 49e6cc70-3d81-11eb-057c-632b5ec8c846
+md"##### Remarque:
+Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
+
+
+# ╔═╡ d6b19590-3d81-11eb-349f-6bea185c1046
+md"Nous avons voulu améliorer le rendu de la fonction unshred (notamment pour RSL). Nous nous sommes rendu compte que les images étaient bien reconstruite à part une coupure dans l'image reconstruire qui correspondait souvent à un des bords de l'image. Dans un premier temps, on a voulu s'assurer que l'arrête de poids minimum était bien dans le graphe. En effet, avec le noeud 0 et tous les arcs sortant de 0 avec le même poids, l'algorithme prenait toujours comme source le noeud 1. On a changé ceci en forcant l'algorithme à aller visiter un des noeuds de l'arc à poids minimum. Nous avons donc implémenté la fonction unshred_min qui prend en entrée les mêmes paramètres, qui renvoient un tour et une image reconstruite mais avec la spécificité de visiter l'arc à poids minimal." 
+
+# ╔═╡ 42928200-3d83-11eb-3bfa-332178fd2405
+md"Nous nous sommes rendu compte que cette technique n'améliorait pas toujours le résultat donné. De plus, elle ne remédiait pas à la coupure en milieu de l'image."
+
+# ╔═╡ d29d4900-3d85-11eb-077b-61cf5ebe96e8
+md"Nous avons en premier voulu trouver l'arrête la plus lourde utilisée dans le tour. Logiquement cette arrête devrait être prêt de la coupure. Nous avons implémenté un algorithme qui décale toute l'image vers la droite jusqu'à ce que la colonne après l'arrête la plus longue soit première dans le tour. De même, nous avons essayé de calculer la différence de poids entre les arrêtes consécutive. Nous avons implémenté un algorithme qui décale l'image vers la droite pour que l'arrête avec la différence de poids la plus élevée se retrouve en début de tour. Nous ne mettons pas les algortimes pour ces deux fonctions ici parce qu'ils n'ont pas donné de bons résultats. On se retouvait souvent avec deux coupures plutôt qu'une. "
+
+# ╔═╡ c33c8480-3d85-11eb-1b82-31de9c53481f
+md"Nous avons alors eu le raisonnement suivant. Les colonnes du bord doivent, en moyenne, être plus différentes de l'ensemble des autres colonnes, que les colonnes en milieu de photo. Nous avons donc implémenté la fonction unshred__ mean qui, de la même manière que unshred_min, force l'algorithme de tournée minimale à commencer par le noeud le plus éloigné en moyenne de tous les autres noeuds. Cet algorithme a souvent amélioré le résultat obtenu, ou a du moins décalé les coupures vers les bors des images."
+
+# ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
+md"Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux."
+
+# ╔═╡ 8ce8c670-3d9c-11eb-1166-9fd188a544ef
+md" ### Résultats: 
+Nous allons maintenant présenter les résultats des algorithmes, ainsi que les meilleurs solutions selon nous. Il faut tout d'abbord importer certains packages." 
+
+# ╔═╡ 88413430-3d98-11eb-1da1-cf95185813b4
+md"#### Image abstract light painting
+Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred_min, qui semble identique à l'originale. Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 0caa3b80-3d90-11eb-04c2-a32700d33403
+begin
+	img0=[load("../phase5/images/original/abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_min_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_mean_abstract-light-painting.png")] 
+	p0=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p0[i], img0[i])
+	end
+	p0
+end
+
+# ╔═╡ 07c36a70-3d99-11eb-1dc1-cf865d9dde7d
+md"#### Image alaska railroad
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min, même si toutes les images sont inversées. L'image données par unshred_min a la plus petite coupure en deux. Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 0ca83fb0-3d90-11eb-1492-d969b1923c3f
+begin
+	img1=[load("../phase5/images/original/alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_min_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_mean_alaska-railroad.png")] 
+	p1=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p1[i], img1[i])
+	end
+	p1
+end
+
+# ╔═╡ 0ca5f5c0-3d90-11eb-1036-bf524ca6f20c
+md"#### Image Blue hour Paris 
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image comme unshred__ mean donne une image non inversée, mais finalement le coût du tour dans unshred__ min est plus faible (unshred__ min : 4.210692e6 contre 4.264599e6 pour unshred__ mean). Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 0ca24c40-3d90-11eb-1afa-99103556f46a
+begin
+	img2=[load("../phase5/images/original/blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_min_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_mean_blue-hour-paris.png")] 
+	p2=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p2[i], img2[i])
+	end
+	p2
+end
+
+# ╔═╡ 0ca02960-3d90-11eb-2bbf-99ab05bf402e
+md"#### Image lower kananaskis lake
+Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Encore une fois, nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image. Le score de unshred__ min reste meilleur. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ c04aaf2e-3d9a-11eb-1016-f354cda5b67c
+begin
+	img3=[load("../phase5/images/original/lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_min_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_mean_lower-kananaskis-lake.png")] 
+	p3=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
+	for i in 1:4
+		plot!(p3[i], img3[i])
+	end
+	p3
+end
+
+# ╔═╡ 6b9c4240-3d9b-11eb-1176-333e0fce5492
+md"#### Image marlet2 radio board
+Ceci est peut-être l'image la plus difficile à reconstruire. Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred__ mean.Nous avons hésité entre unshred__ mean et unshred pour la meilleure image. Le score de unshred__ mean est légérement meilleur (9.362476e6 pour unshred__ mean contre 9.369582e6 pour unshred). 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ c11053b0-3d9b-11eb-21d8-a7d6271cde98
+
+begin
+	img4=[load("../phase5/images/original/marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_mean_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_min_marlet2-radio-board.png")] 
+	p4=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred" "unshred_min"])
+	for i in 1:4
+		plot!(p4[i], img4[i])
+	end
+	p4
+end
+
+# ╔═╡ b1cf08a0-3d9c-11eb-048a-a7a26b755ca4
+md"#### Image nikos cat
+ Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred__ mean qui semble identique à l'originale. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ b27d981e-3d9c-11eb-3968-7b5936c83035
+begin
+	img5=[load("../phase5/images/original/nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_mean_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_min_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_nikos-cat.png")] 
+	p5=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
+	for i in 1:4
+		plot!(p5[i], img5[i])
+	end
+	p5
+end
+
+# ╔═╡ 5c544b00-3d9d-11eb-330e-5b5d56e81dab
+md"#### Image pizza food wallpaper
+Pour les images suivantes, tous les tours sont longs de 601 noeuds.
+La meilleure image trouvée est l'image de l'algorithme unshred, même si elle est inversée par rapport à l'originale. Les deux autres algortihmes donnent une image avec une coupure relativement abrupte.
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 51b63eb0-3d9d-11eb-3f9f-bb2ba196a519
+begin
+	img6=[load("../phase5/images/original/pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_min_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_mean_pizza-food-wallpaper.png")] 
+	p6=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_min" "unshred_mean"])
+	for i in 1:4
+		plot!(p6[i], img6[i])
+	end
+	p6
+end
+
+# ╔═╡ cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
+md"#### Image the enchanted garden
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+La meilleure image trouvée est l'image de l'algorithme unshred_mean, même si elle est inversée par rapport à l'originale.
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ cd7c0930-3d9d-11eb-2326-198d8bf4fbda
+begin
+	img7=[load("../phase5/images/original/the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_mean_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_min_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_the-enchanted-garden.png")] 
+	p7=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
+	for i in 1:4
+		plot!(p7[i], img7[i])
+	end
+	p7
+end
+
+# ╔═╡ 5d699620-3d9e-11eb-0a05-f9c603ab3a6d
+md"#### Image tokyo skytree aerial
+Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
+La meilleure image trouvée est l'image de l'algorithme unshred. Les 3 images produites ne donnent pas de résultats satisfaisants. 
+Nous avons mis les images des deux autres algorithmes pour indication."
+
+# ╔═╡ 6652785e-3d9e-11eb-39a6-1f15754d9664
+begin
+	img8=[load("../phase5/images/original/tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_mean_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_min_tokyo-skytree-aerial.png")] 
+	p8=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_mean" "unshred_min"])
+	for i in 1:4
+		plot!(p8[i], img8[i])
+	end
+	p8
+end
+
+# ╔═╡ f1cea170-3d9e-11eb-3e52-41511958432e
+md"#### En conclusion
+L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ mean se comporte le mieux pour 3 images sur 9 et finalement unshred se comporte le mieux pour 2 images.Tous ces résultats ont été obtenus avec RSL et non Held et Karp. 
+L'algorithme de Held et Karp converge, mais trop lentement. "
+
+
+# ╔═╡ 82af7be2-3e4b-11eb-1d4a-c317530fc377
+md"### Optimisation de Held Karp et temps d'éxecution des algorithmes"
+
+# ╔═╡ 895af140-3e4b-11eb-0378-9310f3a64db3
+md"Comme la reconstitution d'images fonctionnait très bien aves RSL mais avait quelques légers défauts, nous avons tenté de le lancer avec Held Karp. Cependant le temps d'éxecution était beaucoup trop important. C'est pourquoi nous avons établi des tests afin d'améliorer le temps d'éxecution de Held Karp"
+
+# ╔═╡ 8b6455d0-3e4b-11eb-0ed7-d52b1576f65e
+md"#### Temps d'éxecutions des algorithmes"
+
+# ╔═╡ 927802de-3e4b-11eb-0286-f3a7c3f5ed1f
+md"Nous avons créé le fichier hk_optimization qui établit le temps d'éxecution de toutes les fonctions utilisé par Held Karp dont le code est disponible ci-dessous :"
+
+# ╔═╡ 18bce000-3e4c-11eb-2746-3f46b5699ed7
+md"On rajoute en premier Connected Component et find__ minimum__ spanning__ tree des phases précédentes. On les cache comme on ne les a pas modifié."
+
+# ╔═╡ 87986440-3e4c-11eb-0465-89e18c88ed09
+begin
+	mutable struct ConnectedComponent{T} <: AbstractGraph{T}
+	  name::String
+	  nodes::Vector{Node{T}}
+	  edges::Vector{Edge}
+	end
+
+	"""Type representant une composante connexe comme un graphe.
+
+	Exemple :
+
+	  node1 = Node("Joe", 3.14)
+	  node2 = Node("Steve", exp(1))
+	  node3 = Node("Jill", 4.12)
+	  edge1 = Edge(500, (node1, node2))
+	  edge2 = Edge(1000, (node2, node3))
+	  CC = ConnectedComponent("Ick", [node1, node2, node3], [edge1, edge2])
+
+	Attention, tous les noeuds doivent avoir des données de même type.
+	"""
+
+	"""Crée une composante connexe à partir d'un noeud."""
+	create_connected_component_from_node(node::Node{T}) where T = ConnectedComponent{T}("Connected component containing node " * node.name,[node],[])
+
+	"""Calcule le nombre de noeuds d'un lien contenus dans la composante connexe."""
+	function contains_edge_nodes(c_component::ConnectedComponent{T}, edge::Edge) where T
+	  nb_nodes_contained = 0
+	  for node in nodes(edge)
+		if contains_node(c_component, node)
+		  nb_nodes_contained += 1
+		end
+	  end
+	  return nb_nodes_contained
+	end
+
+	"""Fusionne deux composantes connexes reliées par un lien."""
+	function merge_connected_components!(c_component1::ConnectedComponent{T}, c_component2::ConnectedComponent{T}, linking_edge::Edge) where T
+
+	  # Fusion des noeuds
+	  for node in c_component2.nodes
+		add_node!(c_component1, node)
+	  end
+
+	  # Fusion des liens
+	  for edge in c_component2.edges
+		add_edge!(c_component1, edge)
+	  end
+
+	  # Ajout du lien les reliant
+	  add_edge!(c_component1, linking_edge)
+
+	  return c_component1
+	end
+end
+
 # ╔═╡ 22c11e60-3d7d-11eb-3143-ad73b73d5a59
 begin
 	"""Algorithme de Kruskal pour calculer un arbre de recouvrement minimal d'un graphe symétrique connexe."""
@@ -1370,36 +1640,6 @@ begin
 	end
 end
 
-# ╔═╡ adfc7870-3d7e-11eb-17c7-d76f7140dd2a
-md" Nous pouvons maintenant expliquer le travail effectué dans la phase 5 et présenter les différentes fontions implémentées."
-
-# ╔═╡ 1a1785b0-1b68-11eb-0070-8b3453a5c896
-md"Nous avons en premier implementé une fonction tour__cost qui renvoie la somme des coûts des arrêtes d'un tour. Cette fonction est testée dans le fichier unit_ _tests_phase5.jl sur l'exemple donné en cours."
-
-# ╔═╡ 38e5bb30-03f6-11eb-332a-7161bc93b80e
-begin
-	""" fonction qui calcule le cout d un tour"""
-	function tsp_cost(tour::AbstractGraph)
-		cost=0
-		for edge in edges(tour)
-			cost+=weight(edge)
-		end
-		return(cost)
-	end 
-end
-
-# ╔═╡ 84063ae0-1b70-11eb-1407-ff11932e99b6
-md" Nous avons ensuite implémenté plusieurs fontions permettant de reconstruire des images 'déchiquetées' à l'aide des fonctions présentent dans le fichier tools,jl. Nous allons en premier introduire ces fonctions en les cachant." 
-
-# ╔═╡ cb920f20-3d7f-11eb-3e9a-3384dc2f11db
-md"Nous introduison maintenant la première fonction 'unshred' qui prend en entrée le nom d'une image, le boolen hk et le booleen view. Si hk est vrai, on va utiliser l'algorithme de Held et Karp. Sinon on utilise l'algorithme de RSL (tous deux programmés dans la phase 3), Si view est vrai, on affiche l'image reconstruite à la fin. 
-Cet algo prend en entrée le nom d'un image à reconstruire. Il utilise le fichier TSP correspondant pour construire une tournée minimale des colonnes de l'image. Ensuite, on utilise la fonction write__ tour de tools.jl pour écrire le nouveau tour et enfin on utilise la fonction reconstruct__ picture de tools.jl pour reconstruire l'image déchiquetée selon le tour définit. 
-Nous avons nommé les images sortant de cet algortithme: 'reconstructed_new nom de l'image.png'. 
-###### On a ajouté 'new' dans le nom des photos et tours pour prendre en compte le changement de la fonction compare_pixels(p1, p2) dont les éléments sont passés en type Float64. Il sera de même pour toutes les fonctions par la suite. Il faut tout de même noter que ce changement ne donne pas de différence pour la reconstruction d'images avec RSL." 
-
-# ╔═╡ 0844bc50-3d81-11eb-0e58-edce2d809d75
-md" Afin de faire fonctionner RSL avec les instances TSP fournies, nous avons rendu le poids de toutes les arrêtes partant du noeud 0 plus élevé que le poids de l'arrête la plus la lourde du graphe."
-
 # ╔═╡ e779eb3e-3d7f-11eb-3983-379a480d35a9
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
 et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
@@ -1469,14 +1709,6 @@ function unshred(filename::String, hk::Bool, view::Bool)
         reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_"*name(graph)*".png"; view)
     end
 end 
-
-# ╔═╡ 49e6cc70-3d81-11eb-057c-632b5ec8c846
-md"##### Remarque:
-Nous allons présenter les meilleurs résultats pour chaque image ainsi que la longueur des tours après avoir présenté toutes les fonctions implémentées."
-
-
-# ╔═╡ d6b19590-3d81-11eb-349f-6bea185c1046
-md"Nous avons voulu améliorer le rendu de la fonction unshred (notamment pour RSL). Nous nous sommes rendu compte que les images étaient bien reconstruite à part une coupure dans l'image reconstruire qui correspondait souvent à un des bords de l'image. Dans un premier temps, on a voulu s'assurer que l'arrête de poids minimum était bien dans le graphe. En effet, avec le noeud 0 et tous les arcs sortant de 0 avec le même poids, l'algorithme prenait toujours comme source le noeud 1. On a changé ceci en forcant l'algorithme à aller visiter un des noeuds de l'arc à poids minimum. Nous avons donc implémenté la fonction unshred_min qui prend en entrée les mêmes paramètres, qui renvoient un tour et une image reconstruite mais avec la spécificité de visiter l'arc à poids minimal." 
 
 # ╔═╡ 2f4763f0-3d83-11eb-19ef-cb3e2696b7a0
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -1555,15 +1787,6 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
         reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min_"*name(graph)*".png"; view)
     end 
 end 
-
-# ╔═╡ 42928200-3d83-11eb-3bfa-332178fd2405
-md"Nous nous sommes rendu compte que cette technique n'améliorait pas toujours le résultat donné. De plus, elle ne remédiait pas à la coupure en milieu de l'image."
-
-# ╔═╡ d29d4900-3d85-11eb-077b-61cf5ebe96e8
-md"Nous avons en premier voulu trouver l'arrête la plus lourde utilisée dans le tour. Logiquement cette arrête devrait être prêt de la coupure. Nous avons implémenté un algorithme qui décale toute l'image vers la droite jusqu'à ce que la colonne après l'arrête la plus longue soit première dans le tour. De même, nous avons essayé de calculer la différence de poids entre les arrêtes consécutive. Nous avons implémenté un algorithme qui décale l'image vers la droite pour que l'arrête avec la différence de poids la plus élevée se retrouve en début de tour. Nous ne mettons pas les algortimes pour ces deux fonctions ici parce qu'ils n'ont pas donné de bons résultats. On se retouvait souvent avec deux coupures plutôt qu'une. "
-
-# ╔═╡ c33c8480-3d85-11eb-1b82-31de9c53481f
-md"Nous avons alors eu le raisonnement suivant. Les colonnes du bord doivent, en moyenne, être plus différentes de l'ensemble des autres colonnes, que les colonnes en milieu de photo. Nous avons donc implémenté la fonction unshred__ mean qui, de la même manière que unshred_min, force l'algorithme de tournée minimale à commencer par le noeud le plus éloigné en moyenne de tous les autres noeuds. Cet algorithme a souvent amélioré le résultat obtenu, ou a du moins décalé les coupures vers les bors des images."
 
 # ╔═╡ 82bd6600-3d84-11eb-167f-47a00a1325a4
 """fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
@@ -1653,157 +1876,137 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     end
 end 
 
-# ╔═╡ 90c6d7e0-3d84-11eb-302f-2748b11b08fc
-md"Encore une fois, on n'a pas de fonction qui donne des meilleurs résultats pour toutes les photos. Le problème de la coupure en milieu d'image persistait. Nous nous sommes rendu compte que pour le cas de RSL cette coupure en milieu d'image était souvent due à un passage du sous-abre gauche au sous-arbre de droite pour une noeud décisif, mais pas forcément de la racine. Nous avons du mal à identifier ce noeud par un algorithme. Nous avons donc essayé d'implémenter un algorithme de 2-opt, que nous n'avons pas réussi à faire fonctionner sans qu'il soit trop couteux."
-
-# ╔═╡ 8ce8c670-3d9c-11eb-1166-9fd188a544ef
-md" ### Résultats: 
-Nous allons maintenant présenter les résultats des algorithmes, ainsi que les meilleurs solutions selon nous. Il faut tout d'abbord importer certains packages." 
-
-# ╔═╡ 88413430-3d98-11eb-1da1-cf95185813b4
-md"#### Image abstract light painting
-Pour les images suivantes, tous les tours sont longs de 601 noeuds.
-La meilleure image trouvée est l'image de l'algorithme unshred_min, qui semble identique à l'originale. Nous avons mis les images des deux autres algorithmes pour indication."
-
-# ╔═╡ 0caa3b80-3d90-11eb-04c2-a32700d33403
+# ╔═╡ 97cac612-3e4b-11eb-2f90-59e6235e1749
 begin
-	img0=[load("../phase5/images/original/abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_min_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_abstract-light-painting.png"),load("../phase5/images/solutions/reconstructed_new_mean_abstract-light-painting.png")] 
-	p0=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
-	for i in 1:4
-		plot!(p0[i], img0[i])
-	end
-	p0
+	filenamegr21 = "instances/stsp/gr21.tsp"
+	filename561 = "instances/stsp/pa561.tsp"
+	filenamebhp = "../phase5/tsp/instances/blue-hour-paris.tsp"
+
+	graph = create_graph_from_stsp_file(filenamebhp, false)
+	println("Graph ", name(graph), " has ", nb_nodes(graph), " nodes and ", nb_edges(graph), " edges.")
+
+	nbn = nb_nodes(graph)
+	randval = rand(1:nbn)
+	randnode = nodes(graph)[randval]
+	randedge = edges(graph)[randval]
+	pi1 = zeros(nbn)
+	pi2 = ones(nbn)
+
+	println("time subgraph :")
+	@time sub_graph(graph,randnode)
+
+	println("time min weight edges :")
+	@time min_weight_edges(graph,randnode)
+
+	#println("time min_weight_edges2 :")
+	#@time min_weight_edges2(graph,randnode)
+
+	println("time set_node_numbers :")
+	@time set_node_numbers!(graph)
+
+	println("time order_nodes :")
+	@time order_nodes!(graph)
+
+	println("time reset_graph :")
+	@time reset_graph!(graph)
+
+	println("time get_edge_node_nums :")
+	@time get_edge_node_nums(randedge)
+
+	println("time add_pi_graph :")
+	@time old_weights = add_pi_graph!(graph,pi2)
+
+	println("time sub_pi_graph :")
+	@time sub_pi_graph!(graph,old_weights)
+
+	println("time mst krusk :")
+	@time find_minimum_spanning_tree(graph, false)
+
+	println("time mst prim")
+	@time prim(graph, randnode)
+
+	println("time min_one_tree :")
+	@time min_one_tree(graph,randnode, true, false)
+
+	reset_graph!(graph)
+
+	println("time w_one_trees :")
+	@time w_one_trees(graph, pi1, true, false)
 end
 
-# ╔═╡ 07c36a70-3d99-11eb-1dc1-cf865d9dde7d
-md"#### Image alaska railroad
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min, même si toutes les images sont inversées. L'image données par unshred_min a la plus petite coupure en deux. Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ 142f68a0-3e4c-11eb-1e8f-31845d2ea77e
+md"En particulier sur le graphe blue-hour-paris il nous donne les résultats suivants :"
 
-# ╔═╡ 0ca83fb0-3d90-11eb-1492-d969b1923c3f
-begin
-	img1=[load("../phase5/images/original/alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_min_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_alaska-railroad.png"),load("../phase5/images/solutions/reconstructed_new_mean_alaska-railroad.png")] 
-	p1=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
-	for i in 1:4
-		plot!(p1[i], img1[i])
-	end
-	p1
-end
+# ╔═╡ 9f7df200-3e4c-11eb-1605-9713851b02f1
+Graph blue-hour-paris has 601 nodes and 180300 edges.
+time subgraph :
+  0.056816 seconds (39.00 k allocations: 5.103 MiB)
+time min weight edges :
+  0.140259 seconds (204.01 k allocations: 11.088 MiB, 25.98% gc time)
+time set_node_numbers :
+  0.018377 seconds (17.42 k allocations: 988.158 KiB)
+time order_nodes :
+  0.023576 seconds (20.29 k allocations: 1.121 MiB)
+time reset_graph :
+  0.014237 seconds (20.77 k allocations: 1.150 MiB)
+time get_edge_node_nums :
+  0.000004 seconds (1 allocation: 16 bytes)
+time add_pi_graph :
+  0.106312 seconds (1.16 M allocations: 21.786 MiB)
+time sub_pi_graph :
+  0.023968 seconds (15.53 k allocations: 871.424 KiB)
+time mst krusk :
+  0.585060 seconds (728.50 k allocations: 38.654 MiB, 7.06% gc time)
+time mst prim
+ 15.323917 seconds (1.76 M allocations: 96.759 MiB, 1.85% gc time)
+time min_one_tree :
+  0.164156 seconds (72.03 k allocations: 7.414 MiB)
+time w_one_trees :
+105.771334 seconds (686.98 M allocations: 14.418 GiB, 3.58% gc time)
 
-# ╔═╡ 0ca5f5c0-3d90-11eb-1036-bf524ca6f20c
-md"#### Image Blue hour Paris 
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image comme unshred__ mean donne une image non inversée, mais finalement le coût du tour dans unshred__ min est plus faible (unshred__ min : 4.210692e6 contre 4.264599e6 pour unshred__ mean). Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ b235f7d0-3e4c-11eb-0ebf-696aab618714
+md"#### Interprétation des résultats"
 
-# ╔═╡ 0ca24c40-3d90-11eb-1afa-99103556f46a
-begin
-	img2=[load("../phase5/images/original/blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_min_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_blue-hour-paris.png"),load("../phase5/images/solutions/reconstructed_new_mean_blue-hour-paris.png")] 
-	p2=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
-	for i in 1:4
-		plot!(p2[i], img2[i])
-	end
-	p2
-end
+# ╔═╡ b8a575a0-3e4c-11eb-0836-092cb6f1b34a
+md"Afin d'utiliser les résultats précédents de manière pertinente, il est crucial de comprendre le fonctionnement de Held Karp et quelles sont les fonctions pour lesquelles il est le plus important d'améliorer les résultats."
 
-# ╔═╡ 0ca02960-3d90-11eb-2bbf-99ab05bf402e
-md"#### Image lower kananaskis lake
-Pour les images suivantes, tous les tours sont longs de 601 noeuds. La meilleure image trouvée est l'image de l'algorithme unshred__ min. Encore une fois, nous avons hésité entre unshred__ min et unshred__ mean pour la meilleure image. Le score de unshred__ min reste meilleur. 
-Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ bf430850-3e4c-11eb-3ee6-ed8c7b588004
+md"Afin d'utiliser les résultats précédents de manière pertinente, il est crucial de comprendre le fonctionnement de Held Karp et quelles sont les fonctions pour lesquelles il est le plus important d'améliorer les résultats."
 
-# ╔═╡ c04aaf2e-3d9a-11eb-1016-f354cda5b67c
-begin
-	img3=[load("../phase5/images/original/lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_min_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_lower-kananaskis-lake.png"),load("../phase5/images/solutions/reconstructed_new_mean_lower-kananaskis-lake.png")] 
-	p3=plot(layout = 4, size = (670,600),title=["original" "unshred_min" "unshred" "unshred_mean"])
-	for i in 1:4
-		plot!(p3[i], img3[i])
-	end
-	p3
-end
+# ╔═╡ c3d07fb0-3e4c-11eb-1d1a-7bf2b3eee17d
+md"La fonction w\_one\_trees a une boucle principale qui appelle elle même 3 fonctions principales : add\_pi\_graph, min\_one\_tree et sub\_pi\_graph. Là encore, mis à part ces 3 fonctions w\_one\_trees peut difficilement être améliorée."
 
-# ╔═╡ 6b9c4240-3d9b-11eb-1176-333e0fce5492
-md"#### Image marlet2 radio board
-Ceci est peut-être l'image la plus difficile à reconstruire. Pour les images suivantes, tous les tours sont longs de 601 noeuds.
-La meilleure image trouvée est l'image de l'algorithme unshred__ mean.Nous avons hésité entre unshred__ mean et unshred pour la meilleure image. Le score de unshred__ mean est légérement meilleur (9.362476e6 pour unshred__ mean contre 9.369582e6 pour unshred). 
-Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ ca669850-3e4c-11eb-16ab-43dde517ae6e
+md"Les fonctions add\_pi\_graph et sub\_pi\_graph contiennent toutes 2 une boucle avec des opérations élémentaires irréductibles donc on peut difficilement les améliorer. Nous avons cependant enlevé un test if inutile dans add\_pi\_graph mais l'impact sur le temps d'éxecution est imperceptible (sauf éventuellement sur des très gros calculs)." 
 
-# ╔═╡ c11053b0-3d9b-11eb-21d8-a7d6271cde98
+# ╔═╡ d1426c7e-3e4c-11eb-0a83-1db87ffbb917
+md"Il reste désormais la fonction min\_one\_tree. Mis à part quelques conditions qui pourraient être enlevées pour un gain minime mais au détriment d'une facilité de lisibilité, 2 éléments sont ici très importants : le calcul avec l'algorithme de Prim ou Kruskal et la fonction min\_weight\_edges."
 
-begin
-	img4=[load("../phase5/images/original/marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_mean_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_marlet2-radio-board.png"),load("../phase5/images/solutions/reconstructed_new_min_marlet2-radio-board.png")] 
-	p4=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred" "unshred_min"])
-	for i in 1:4
-		plot!(p4[i], img4[i])
-	end
-	p4
-end
+# ╔═╡ d880fa20-3e4c-11eb-1237-2b1537e7e3b6
+md"Sur les tests effectués, l'algorithme de Kruskal semble bien plus performant que celui de Prim. Par ailleurs, peu importe lequel des deux on choisit, il s'agit de la principal source de temps de calcul de l'algorithme de Held Karp. Pourtant, après lecture des 2 algorithmes, il n'y a pas de boucle superflue donc dans le meilleur des cas, on pourrait espérer améliorer seulement d'un assez faible pourcentage les résultats."
 
-# ╔═╡ b1cf08a0-3d9c-11eb-048a-a7a26b755ca4
-md"#### Image nikos cat
- Pour les images suivantes, tous les tours sont longs de 601 noeuds.
-La meilleure image trouvée est l'image de l'algorithme unshred__ mean qui semble identique à l'originale. 
-Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ dcb04bf0-3e4c-11eb-3cf7-d5651761b8fb
+md"D'après les tests effectués, la fonction min\_weight\_edges a un temps d'éxecution assez important par rapport à la tâche qu'elle est censée effectuer. Nous avons donc créé une nouvelle version qui a un temps d'éxecution de 80% par rapport à la première version ( environ 0.10 secondes contre 0.12 secondes avant sur un même graphe )."
 
-# ╔═╡ b27d981e-3d9c-11eb-3968-7b5936c83035
-begin
-	img5=[load("../phase5/images/original/nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_mean_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_min_nikos-cat.png"),load("../phase5/images/solutions/reconstructed_new_nikos-cat.png")] 
-	p5=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
-	for i in 1:4
-		plot!(p5[i], img5[i])
-	end
-	p5
-end
+# ╔═╡ e34a8340-3e4c-11eb-3d43-ed3be891a73f
+md"#### Conclusion sur l'optimisation de Held Karp"
 
-# ╔═╡ 5c544b00-3d9d-11eb-330e-5b5d56e81dab
-md"#### Image pizza food wallpaper
-Pour les images suivantes, tous les tours sont longs de 601 noeuds.
-La meilleure image trouvée est l'image de l'algorithme unshred, même si elle est inversée par rapport à l'originale. Les deux autres algortihmes donnent une image avec une coupure relativement abrupte.
-Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ eae5d6e0-3e4c-11eb-3a3e-61b8b965cccd
+md"L'algorithme de Held Karp semble donc difficilement améliorable d'un facteur important sans changer entièrement sa conception. Cependant, si nous avions plus de temps nous pourrions suivre 2 chemins pour le rendre plus rapide.
+Le premier consiste à repenser entièrement l'implémentation en créant une nouvelle structure de graphe plus légère et spécialement adaptée à Held Karp. 
+Le second serait d'exploiter les optimisations de Julia qui semble prendre un temps moins important pour éxecuter 2 fonctions similaires l'une après l'autre et donc il faudrait regrouper l'éxecution des différentes parties de Held Karp."
 
-# ╔═╡ 51b63eb0-3d9d-11eb-3f9f-bb2ba196a519
-begin
-	img6=[load("../phase5/images/original/pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_min_pizza-food-wallpaper.png"),load("../phase5/images/solutions/reconstructed_new_mean_pizza-food-wallpaper.png")] 
-	p6=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_min" "unshred_mean"])
-	for i in 1:4
-		plot!(p6[i], img6[i])
-	end
-	p6
-end
+# ╔═╡ f2424cc0-3e4c-11eb-1373-d5c5664c1818
+md"#### Utilisation d'ordinateurs plus puissants"
 
-# ╔═╡ cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
-md"#### Image the enchanted garden
-Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
-La meilleure image trouvée est l'image de l'algorithme unshred_mean, même si elle est inversée par rapport à l'originale.
-Nous avons mis les images des deux autres algorithmes pour indication."
+# ╔═╡ feb82650-3e4c-11eb-3a6c-6f73e71c43e0
+md"Une alternative à l'optimisation de Held Karp est d'utiliser des ordinateurs plus puissants pour obtenir un résultat en un temps moindre. Nous nous sommes donc connecté à distance aux machines de l'école, avons installé julia ainsi que toutes les bibliothèques nécessaires et avons testé le temps d'éxecution de Held Karp sur un graphe pour lequel on arrive à avoir rapidement un résultat optimal."
 
-# ╔═╡ cd7c0930-3d9d-11eb-2326-198d8bf4fbda
-begin
-	img7=[load("../phase5/images/original/the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_mean_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_min_the-enchanted-garden.png"),load("../phase5/images/solutions/reconstructed_new_the-enchanted-garden.png")] 
-	p7=plot(layout = 4, size = (670,600),title=["original" "unshred_mean" "unshred_min" "unshred"])
-	for i in 1:4
-		plot!(p7[i], img7[i])
-	end
-	p7
-end
+# ╔═╡ 03ffc5f0-3e4d-11eb-20c8-dd186d53a35d
+md"Nous avons donc testé l'algortihme de Held Karp sur le graphe gr21 qui nous donne un résultat en 5 secondes au lieu de 10 secondes sur ma machine personnelle, donc un gain de temps de 50%."
 
-# ╔═╡ 5d699620-3d9e-11eb-0a05-f9c603ab3a6d
-md"#### Image tokyo skytree aerial
-Pour les images suivantes, tous les tours sont longs de 601 noeuds (en comptant le noeud 0).
-La meilleure image trouvée est l'image de l'algorithme unshred. Les 3 images produites ne donnent pas de résultats satisfaisants. 
-Nous avons mis les images des deux autres algorithmes pour indication."
-
-# ╔═╡ 6652785e-3d9e-11eb-39a6-1f15754d9664
-begin
-	img8=[load("../phase5/images/original/tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_mean_tokyo-skytree-aerial.png"),load("../phase5/images/solutions/reconstructed_new_min_tokyo-skytree-aerial.png")] 
-	p8=plot(layout = 4, size = (670,600),title=["original" "unshred" "unshred_mean" "unshred_min"])
-	for i in 1:4
-		plot!(p8[i], img8[i])
-	end
-	p8
-end
-
-# ╔═╡ f1cea170-3d9e-11eb-3e52-41511958432e
-md"#### En conclusion
-L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ mean se comporte le mieux pour 3 images sur 9 et finalement unshred se comporte le mieux pour 2 images.Tous ces résultats ont été obtenus avec RSL et non Held et Karp. 
-L'algorithme de Held et Karp converge, mais trop lentement. "
-
+# ╔═╡ 093404a0-3e4d-11eb-3f5a-55516758e43e
+md"Cependant, une itération de Held Karp prend tout de même encore 60 secondes sur un des graphes proposés pour la phase 5. Il faut donc plus d'une heure pour 100 itérations en théorie et en pratique même après 2h l'algorithme n'a pas effectué 100 itérations (il s'avère après vérifications que le temps d'une itération augmente au fur et à mesure, par exemple l'itération 50 dure plus de 10 minutes). De plus, d'après les résultats de la phase 4, avec notre implémentation, Held Karp semble donner des résultats concluants entre 1000 et 10000 itérations soit entre 16 et 160h d'éxecution sur les machines de l'école en théorie (nombre qui semble devoir être revu à la hausse avec les résultats vus précédemment). Nous n'avons pas réussi à lancer une éxecution aussi longue mais d'après les résultats de RSL qui semblaient concluants, avec suffisamment de temps on pourrait avoir une reconstitution parfaite d'une image avec Held Karp. Par ailleurs, avec un nombre trop petit d'itérations, l'algorithme ne donne pas de résultats suffisants pour recréer un tour avec la fonction correct\_one\_tree."
 
 # ╔═╡ Cell order:
 # ╟─5306c162-03f3-11eb-3b80-3577af92365c
@@ -1847,5 +2050,28 @@ L'algorithme de Held et Karp converge, mais trop lentement. "
 # ╟─cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
 # ╟─cd7c0930-3d9d-11eb-2326-198d8bf4fbda
 # ╟─5d699620-3d9e-11eb-0a05-f9c603ab3a6d
-# ╟─6652785e-3d9e-11eb-39a6-1f15754d9664
+# ╠═6652785e-3d9e-11eb-39a6-1f15754d9664
 # ╟─f1cea170-3d9e-11eb-3e52-41511958432e
+# ╟─82af7be2-3e4b-11eb-1d4a-c317530fc377
+# ╟─895af140-3e4b-11eb-0378-9310f3a64db3
+# ╟─8b6455d0-3e4b-11eb-0ed7-d52b1576f65e
+# ╟─927802de-3e4b-11eb-0286-f3a7c3f5ed1f
+# ╟─18bce000-3e4c-11eb-2746-3f46b5699ed7
+# ╟─87986440-3e4c-11eb-0465-89e18c88ed09
+# ╠═97cac612-3e4b-11eb-2f90-59e6235e1749
+# ╟─142f68a0-3e4c-11eb-1e8f-31845d2ea77e
+# ╠═9f7df200-3e4c-11eb-1605-9713851b02f1
+# ╟─b235f7d0-3e4c-11eb-0ebf-696aab618714
+# ╟─b8a575a0-3e4c-11eb-0836-092cb6f1b34a
+# ╟─bf430850-3e4c-11eb-3ee6-ed8c7b588004
+# ╟─c3d07fb0-3e4c-11eb-1d1a-7bf2b3eee17d
+# ╟─ca669850-3e4c-11eb-16ab-43dde517ae6e
+# ╟─d1426c7e-3e4c-11eb-0a83-1db87ffbb917
+# ╟─d880fa20-3e4c-11eb-1237-2b1537e7e3b6
+# ╟─dcb04bf0-3e4c-11eb-3cf7-d5651761b8fb
+# ╟─e34a8340-3e4c-11eb-3d43-ed3be891a73f
+# ╟─eae5d6e0-3e4c-11eb-3a3e-61b8b965cccd
+# ╟─f2424cc0-3e4c-11eb-1373-d5c5664c1818
+# ╟─feb82650-3e4c-11eb-3a6c-6f73e71c43e0
+# ╟─03ffc5f0-3e4d-11eb-20c8-dd186d53a35d
+# ╟─093404a0-3e4d-11eb-3f5a-55516758e43e

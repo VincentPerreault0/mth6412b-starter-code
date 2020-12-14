@@ -75,7 +75,7 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 5, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 10, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -83,26 +83,30 @@ function unshred(filename::String, hk::Bool, view::Bool)
         end
         #Step 2: Create an array with the order
         dict_nodes=Dict{Node, Vector{Node}}()
-        for node in nodes(graph_tour)
+        for node in nodes(graphe_tour)
             dict_nodes[node]=Vector{Node{typeof(node)}}[]
         end 
-        for edge in edges(graph_tour)
+        for edge in edges(graphe_tour)
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
             push!(dict_nodes[node1],node2)
             push!(dict_nodes[node2],node1)
         end
         liste=Vector{Int64}()
         i=1
-        node=nodes(graph_tour)[1]
-        while i<=length(nodes(graph_tour))
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
             push!(liste, parse(Int64,name(node)))
             node1=dict_nodes[node][1]
             filter(x->name(x)!=name(node), dict_nodes[node1])
             node=node1
             i+=1
         end
-
+        println(liste)
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
+        println(liste)
     else #use RSL
         #we need to prepare the graph
         m=0
