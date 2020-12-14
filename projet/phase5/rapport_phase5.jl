@@ -812,7 +812,7 @@ end
 md"# Rapport du projet d'Implémentation d'algo. de rech. opérationnelle
 ## Phase 5 : 14/12/2020
 Antonin Kenens, Vincent Perreault et Laura Kolcheva
-Dépôt github à l'adresse suivante: https://github.com/VincentPerreault0/mth6412b-starter-code/tree/phase5
+Dépôt github à l'adresse suivante: https://github.com/VincentPerreault0/mth6412b-starter-code/tree/phase5Laura
 "
 
 # ╔═╡ 74929e92-3d86-11eb-2bef-271e790eab88
@@ -1848,5 +1848,5 @@ L'agorithme unshred__ min se comporte le mieux pour 4 images sur 9, unshred__ me
 # ╟─cf1a28d0-3d9d-11eb-2202-f378bcaf1a18
 # ╟─cd7c0930-3d9d-11eb-2326-198d8bf4fbda
 # ╟─5d699620-3d9e-11eb-0a05-f9c603ab3a6d
-# ╠═6652785e-3d9e-11eb-39a6-1f15754d9664
+# ╟─6652785e-3d9e-11eb-39a6-1f15754d9664
 # ╟─f1cea170-3d9e-11eb-3e52-41511958432e
