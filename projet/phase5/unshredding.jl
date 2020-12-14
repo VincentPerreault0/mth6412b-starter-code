@@ -127,9 +127,9 @@ function unshred(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_"*name(graph)*".png"; view)
     end
 end 
 
@@ -204,9 +204,9 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_min_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_min_"*name(graph)*".png"; view)
     end 
 end 
 
@@ -291,9 +291,9 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     #Step 5: Reconstruct picture
     picture_name="projet/phase5/images/shuffled/"*name(graph)*".png"
     if hk
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_hk_new_mean_"*name(graph)*".png"; view)
     else
-        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean "*name(graph)*".png"; view)
+        reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean_"*name(graph)*".png"; view)
     end
 end 
 
