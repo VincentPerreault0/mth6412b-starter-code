@@ -116,10 +116,10 @@ function unshred(filename::String, hk::Bool, view::Bool)
         #On veut que le tour commence par 0
         liste=Vector{Int64}()
         for i in x: length(liste2)
-            push!(liste2[i], liste)
+            push!(liste, liste2[i])
         end 
         for i in 1:x-1
-            push!(liste2[i], liste)
+            push!(liste, liste2[i])
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
