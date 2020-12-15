@@ -75,7 +75,7 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 30, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -178,7 +178,7 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 30, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
@@ -290,7 +290,7 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 30, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
