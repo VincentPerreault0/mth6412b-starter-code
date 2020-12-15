@@ -1669,16 +1669,51 @@ function unshred(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
             println("Not a tour")
         end
         #Step 2: Create an array with the order
-        liste=Vector{Int64}()
+        dict_nodes=Dict{Node, Vector{Node}}()
+        for node in nodes(graphe_tour)
+            dict_nodes[node]=Vector{Node{typeof(node)}}[]
+        end 
         for edge in edges(graphe_tour)
-            push!(liste, parse(Int64,name(nodes(edge)[1])))
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
+            push!(dict_nodes[node1],node2)
+            push!(dict_nodes[node2],node1)
+        end
+        #Ceci marche uniquement si on a bien un tour !
+        liste2=Vector{Int64}()
+        i=1
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
+            push!(liste2, parse(Int64,name(node)))
+            node1=dict_nodes[node][1]
+            filter!(x->name(x)!=name(node), dict_nodes[node1])
+            node=node1
+            i+=1
+        end
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
@@ -1709,7 +1744,6 @@ function unshred(filename::String, hk::Bool, view::Bool)
             push!(liste, parse(Int64,name(popfirst!(tmp))))
         end
     end
-
     #Step 4: Write tour
     if hk
         tour_name="projet/phase5/images/solutions/"*name(graph)*"_hk_new_tour.txt"
@@ -1739,16 +1773,51 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
             println("Not a tour")
         end
         #Step 2: Create an array with the order
-        liste=Vector{Int64}()
+        dict_nodes=Dict{Node, Vector{Node}}()
+        for node in nodes(graphe_tour)
+            dict_nodes[node]=Vector{Node{typeof(node)}}[]
+        end 
         for edge in edges(graphe_tour)
-            push!(liste, parse(Int64,name(nodes(edge)[1])))
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
+            push!(dict_nodes[node1],node2)
+            push!(dict_nodes[node2],node1)
+        end
+        #Ceci marche uniquement si on a bien un tour !
+        liste2=Vector{Int64}()
+        i=1
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
+            push!(liste2, parse(Int64,name(node)))
+            node1=dict_nodes[node][1]
+            filter!(x->name(x)!=name(node), dict_nodes[node1])
+            node=node1
+            i+=1
+        end
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
@@ -1817,16 +1886,51 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 100, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
             println("Not a tour")
         end
         #Step 2: Create an array with the order
-        liste=Vector{Int64}()
+        dict_nodes=Dict{Node, Vector{Node}}()
+        for node in nodes(graphe_tour)
+            dict_nodes[node]=Vector{Node{typeof(node)}}[]
+        end 
         for edge in edges(graphe_tour)
-            push!(liste, parse(Int64,name(nodes(edge)[1])))
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
+            push!(dict_nodes[node1],node2)
+            push!(dict_nodes[node2],node1)
+        end
+        #Ceci marche uniquement si on a bien un tour !
+        liste2=Vector{Int64}()
+        i=1
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
+            push!(liste2, parse(Int64,name(node)))
+            node1=dict_nodes[node][1]
+            filter!(x->name(x)!=name(node), dict_nodes[node1])
+            node=node1
+            i+=1
+        end
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
@@ -1892,6 +1996,7 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
         reconstruct_picture(tour_name, picture_name,"projet/phase5/images/solutions/reconstructed_new_mean_"*name(graph)*".png"; view)
     end
 end 
+
 
 # ╔═╡ 97cac612-3e4b-11eb-2f90-59e6235e1749
 begin

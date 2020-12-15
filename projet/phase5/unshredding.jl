@@ -62,7 +62,7 @@ function two_opt(graph::AbstractGraph, q::Vector{Node{T}}, iters_max:: Int64) wh
         n=list[n]
     end
     return(qnew)
-end 
+end  
 
 """ fonction qui prend en entree le nom d un fichier, decide si on utilise Held et Karp (true) our RSL (false)
 et renvoie l'image reconstruite en utilisant le TSP fournit dans instances et les images dechiquetees fournies
@@ -92,27 +92,35 @@ function unshred(filename::String, hk::Bool, view::Bool)
             push!(dict_nodes[node1],node2)
             push!(dict_nodes[node2],node1)
         end
-        tmp=nodes(graphe_tour)[1]
-        for node in nodes(graph_tour)
-            if length(dict_nodes[node])!=2
-                println(dict_nodes[node])
-                tmp=node
-            end
-        end 
-        println("fin if")
         #Ceci marche uniquement si on a bien un tour !
-        liste=Vector{Int64}()
+        liste2=Vector{Int64}()
         i=1
-        node=tmp
-        node1=tmp
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
         while i<=length(nodes(graphe_tour))
-            push!(liste, parse(Int64,name(node)))
+            push!(liste2, parse(Int64,name(node)))
             node1=dict_nodes[node][1]
             filter!(x->name(x)!=name(node), dict_nodes[node1])
             node=node1
             i+=1
         end
-        println(liste)
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
+        end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
     else #use RSL
@@ -170,16 +178,51 @@ function unshred_min(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 20, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
             println("Not a tour")
         end
         #Step 2: Create an array with the order
-        liste=Vector{Int64}()
+        dict_nodes=Dict{Node, Vector{Node}}()
+        for node in nodes(graphe_tour)
+            dict_nodes[node]=Vector{Node{typeof(node)}}[]
+        end 
         for edge in edges(graphe_tour)
-            push!(liste, parse(Int64,name(nodes(edge)[1])))
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
+            push!(dict_nodes[node1],node2)
+            push!(dict_nodes[node2],node1)
+        end
+        #Ceci marche uniquement si on a bien un tour !
+        liste2=Vector{Int64}()
+        i=1
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
+            push!(liste2, parse(Int64,name(node)))
+            node1=dict_nodes[node][1]
+            filter!(x->name(x)!=name(node), dict_nodes[node1])
+            node=node1
+            i+=1
+        end
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
@@ -247,16 +290,51 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     if hk #Use Held and Karp alg
         #Step 1: Find minimal tour
         pi_mg = zeros(nb_nodes(graph))
-        tree_graph, max_wk = max_w_lk(graph, 1.0 , 20, pi_mg, true, false)
+        tree_graph, max_wk = max_w_lk(graph, 1.0 , 15, pi_mg, true, false)
         graphe_tour = get_tour(graph, tree_graph)
         if is_tour(graphe_tour)
         else
             println("Not a tour")
         end
         #Step 2: Create an array with the order
-        liste=Vector{Int64}()
+        dict_nodes=Dict{Node, Vector{Node}}()
+        for node in nodes(graphe_tour)
+            dict_nodes[node]=Vector{Node{typeof(node)}}[]
+        end 
         for edge in edges(graphe_tour)
-            push!(liste, parse(Int64,name(nodes(edge)[1])))
+            node1=nodes(edge)[1]
+            node2=nodes(edge)[2]
+            push!(dict_nodes[node1],node2)
+            push!(dict_nodes[node2],node1)
+        end
+        #Ceci marche uniquement si on a bien un tour !
+        liste2=Vector{Int64}()
+        i=1
+        node=nodes(graphe_tour)[1]
+        node1=nodes(graphe_tour)[1]
+        while i<=length(nodes(graphe_tour))
+            push!(liste2, parse(Int64,name(node)))
+            node1=dict_nodes[node][1]
+            filter!(x->name(x)!=name(node), dict_nodes[node1])
+            node=node1
+            i+=1
+        end
+        i=1 
+        x=0
+        while i<= length(liste2)
+            if liste2[i]==1
+                x=i
+                i=length(liste2)+2
+            end 
+            i+=1
+        end 
+        #On veut que le tour commence par 0
+        liste=Vector{Int64}()
+        for i in x: length(liste2)
+            push!(liste2[i], liste)
+        end 
+        for i in 1:x-1
+            push!(liste2[i], liste)
         end
         #Step 3: Find cost of tour
         cost=tsp_cost(graphe_tour)
