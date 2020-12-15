@@ -1997,7 +1997,6 @@ function unshred_mean(filename::String, hk::Bool, view::Bool)
     end
 end 
 
-
 # ╔═╡ 97cac612-3e4b-11eb-2f90-59e6235e1749
 begin
 	filenamegr21 = "instances/stsp/gr21.tsp"
